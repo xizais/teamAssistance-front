@@ -43,12 +43,14 @@
   <div class="content">
     <!-- 内容 -->
     <div
-        v-for="(container, index) in containers"
-        :key="index"
+        v-for="(container) in containers"
+        :key="container.id"
         class="container-box"
         :style="{ width: container.width + 'px', height: container.height + 'px' }"
-        @click="selectContainer(index)"
+        @click="selectContainer(container.id)"
     >
+      <div style="border: solid 1px; width: 20px; height: 30px; float: left"></div>
+      <div style="border: solid 1px; width: 20px; height: 30px; float: left"></div>
     </div>
   </div>
 </template>
@@ -85,11 +87,15 @@ export default {
         isContainer: true,
         width: parseInt(this.width),
         height: parseInt(this.height),
+        child: {}
       };
       this.containerIndex++;
       this.containers.push(newContainer);
     },
-    selectContainer(index) {
+    selectContainer(id) {
+      const index = this.containers.findIndex(function (obj) {
+        return obj.id === id;
+      });
       this.selectedContainer = this.containers[index];
     },
     resizeContainer() {
