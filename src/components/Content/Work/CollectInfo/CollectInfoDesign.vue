@@ -19,6 +19,8 @@
       <el-input v-model="width" placeholder="输入宽度"></el-input>
       <el-input v-model="height" placeholder="输入高度"></el-input>
       <el-button @click="addContainer">生成容器</el-button>
+
+      <el-button @click="addChild">生成子元素</el-button>
     </div>
     <div class="sidebar-left-hidden" v-if="!isShowLeft">
       <el-button type="primary" @click="isShowLeft = true" v-if="!isShowLeft">展开</el-button>
@@ -49,8 +51,11 @@
         :style="{ width: container.width + 'px', height: container.height + 'px' }"
         @click="selectContainer(container.id)"
     >
-      <div style="border: solid 1px; width: 20px; height: 30px; float: left"></div>
-      <div style="border: solid 1px; width: 20px; height: 30px; float: left"></div>
+      <div class="container-box-child"
+          v-for="(child) in container.child"
+           :key="child.id"
+           @click="selectChild(container.id,child.id)"
+      >1</div>
     </div>
   </div>
 </template>
@@ -63,11 +68,12 @@ export default {
       isShowLeft: true,
       isShowRight: true,
 
-      containerIndex: 0,
+      generateIndex: 0,
       width: 400,
       height: 500,
       containers: [],
-      selectedContainer: {}, // 将初始值设置为空对象
+      selectedContainer: {}, // 临时容器对象
+      selectedChild: {}, // 临时容器子元素对象
     };
   },
   methods: {
@@ -81,23 +87,64 @@ export default {
     saveForm() {
       // 保存表单逻辑
     },
+
+    // 生成容器
     addContainer() {
       const newContainer = {
-        id: this.containerIndex,
+        id: this.generateIndex,
         isContainer: true,
         width: parseInt(this.width),
         height: parseInt(this.height),
         child: {}
       };
-      this.containerIndex++;
+      this.generateIndex++;
       this.containers.push(newContainer);
     },
+
+    // 生成容器子元素
+    addChild(containId) {
+
+      // 请选中容器！
+
+
+
+      const newChild = {
+        id: this.generateIndex,
+        isContainer: false,
+        width: parseInt(100),
+        height: parseInt(200),
+      };
+
+      // 查找容器index
+      const containIndex = this.getMetaIndex(this.containers,containId);
+
+
+      this.generateIndex++;
+      this.containers[containIndex].push(newChild);
+    },
+    getMetaIndex(obj) {
+      return obj;
+    },
+
+    // 选择容器时
     selectContainer(id) {
       const index = this.containers.findIndex(function (obj) {
         return obj.id === id;
       });
       this.selectedContainer = this.containers[index];
     },
+
+    // 选择容器内的子元素时
+    selectChild(containerId,childId) {
+      const containIndex = this.containers.findIndex(function (obj) {
+        return obj.id === containerId;
+      });
+      const childIndex = this.containers[containIndex].findIndex(function (obj) {
+        return obj.id === childId;
+      });
+      this.selectedChild = this.containers[containIndex][childIndex];
+    },
+
     resizeContainer() {
       // 调整容器大小逻辑
     },
@@ -189,5 +236,14 @@ export default {
 
 .delete-button {
   margin-top: 10px;
+}
+
+.container-box-child {
+  border: solid 1px;
+  margin: 0;
+  padding: 0;
+  width: 20px;
+  height: 30px;
+  float: left;
 }
 </style>
