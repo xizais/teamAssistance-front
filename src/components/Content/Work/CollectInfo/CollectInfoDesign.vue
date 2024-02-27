@@ -87,7 +87,9 @@ export default {
 
     // 重置表单逻辑
     resetForm() {
-
+      this.selectedContainer = {};
+      this.selectedChild = {};
+      this.containers = [];
     },
 
     // 保存表单逻辑
@@ -110,7 +112,6 @@ export default {
 
     // 生成容器子元素
     addChild(containId) {
-
       if (containId === null || containId === '' || containId === undefined) {
           ElMessage.warning('请选择容器！');
       } else {
