@@ -55,8 +55,16 @@
       <div class="container-box-child"
           v-for="(child) in container.child"
            :key="child.id"
+           :style="{ width: child.width + 'px', height: child.height + 'px' }"
            @click="selectChild(container.id,child.id)"
-      >{{ child.id }}</div>
+      >
+        <template v-if="child.type === 0">
+          <el-input :style="{ width: childSize }" v-model="child.height" />
+        </template>
+        <template v-else>
+          <!-- 其他类型的子元素渲染 -->
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -124,6 +132,7 @@ export default {
           isContainer: false,
           width: parseInt(100),
           height: parseInt(200),
+          type: 0,
         };
 
         // 存入子元素
@@ -270,8 +279,6 @@ export default {
   border: solid 1px;
   margin: 0;
   padding: 0;
-  width: 20px;
-  height: 30px;
   float: left;
 }
 </style>
