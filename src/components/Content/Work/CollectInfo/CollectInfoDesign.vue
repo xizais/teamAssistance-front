@@ -1,6 +1,3 @@
-非常抱歉，以下是完整的Vue代码：
-
-```html
 <template>
   <!-- 顶部导航栏 -->
   <div class="navbar">
@@ -16,11 +13,20 @@
   <div>
     <div class="sidebar-left-show" v-if="isShowLeft">
       <el-button type="primary" @click="isShowLeft = false">收回</el-button>
-      <el-input v-model="width" placeholder="输入宽度"></el-input>
-      <el-input v-model="height" placeholder="输入高度"></el-input>
-      <el-button @click="addContainer">生成容器</el-button>
-
-      <el-button @click="addChild(this.selectedContainer.id)">生成子元素</el-button>
+      <div style="display: flex; flex-direction: column;">
+        <el-button class="from-button" @click="addContainer()">生成容器</el-button>
+        <el-select class="from-button" v-model="childType" placeholder="请选择">
+          <el-option label="文本框" value="text"></el-option>
+          <el-option label="输入框" value="input"></el-option>
+          <el-option label="下拉框" value="select"></el-option>
+          <el-option label="文本域" value="textarea"></el-option>
+          <el-option label="单选框" value="radio"></el-option>
+          <el-option label="多选框" value="checkbox"></el-option>
+        </el-select>
+        <el-button class="from-button" @click="addChild(this.selectedContainer.id)">生成元素</el-button>
+        <el-button class="from-button" @click="deleteGenerate(true,selectedContainer.id)">删除选定容器</el-button>
+        <el-button class="from-button" @click="deleteGenerate(false,selectedChild.id)">删除选定元素</el-button>
+      </div>
     </div>
     <div class="sidebar-left-hidden" v-if="!isShowLeft">
       <el-button type="primary" @click="isShowLeft = true" v-if="!isShowLeft">展开</el-button>
@@ -29,13 +35,67 @@
 
   <!-- 右侧半透明盒子 -->
   <div>
-    <div class="sidebar-right-show" v-if="isShowRight">
+    <div class="sidebar-right-show" v-if="isShowRight"  style="text-align: right;">
       <el-button type="primary" @click="isShowRight = false">收回</el-button>
-      <el-input v-model="selectedContainer.width" placeholder="输入宽度"></el-input>
-      <el-input v-model="selectedContainer.height" placeholder="输入高度"></el-input>
-      <el-button @click="resizeContainer">调整大小</el-button>
-      <el-button class="delete-button" @click="deleteGenerate(true,selectedContainer.id)">删除选定容器</el-button>
-      <el-button class="delete-button" @click="deleteGenerate(false,selectedChild.id)">删除选定元素</el-button>
+      <el-row>
+        <el-col :span="9" class="text-right">
+          <el-text class="align-right">容器宽度:</el-text>
+        </el-col>
+        <el-col :span="15">
+          <el-input class="input-right" v-model="selectedContainer.width" placeholder="输入宽度(%)"></el-input>
+        </el-col>
+
+        <el-col :span="9" class="text-right">
+          <el-text class="align-right">容器高度:</el-text>
+        </el-col>
+        <el-col :span="15">
+          <el-input class="input-right" v-model="selectedContainer.height" placeholder="输入高度(px)"></el-input>
+        </el-col>
+
+        <el-col :span="9" class="text-right">
+          <el-text class="align-right">边框展示:</el-text>
+        </el-col>
+        <el-radio-group v-model="selectedContainer.showBorder">
+          <el-col :span="10">
+            <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
+          </el-col>
+          <el-col :span="14">
+            <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
+          </el-col>
+        </el-radio-group>
+
+        <template v-if="selectedContainer.showBorder">
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">边框粗度:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedContainer.borderWidth" placeholder="输入边框粗度(px)"></el-input>
+          </el-col>
+        </template>
+
+        <el-col :span="9" class="text-right">
+          <el-text class="align-right">圆角展示:</el-text>
+        </el-col>
+        <el-radio-group v-model="selectedContainer.showRadius">
+          <el-col :span="10">
+            <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
+          </el-col>
+          <el-col :span="14">
+            <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
+          </el-col>
+        </el-radio-group>
+
+        <template v-if="selectedContainer.showRadius">
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">圆角程度:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedContainer.borderRadius" placeholder="输入圆角程度(px)"></el-input>
+          </el-col>
+        </template>
+
+
+      </el-row>
     </div>
     <div class="sidebar-right-hidden" v-if="!isShowRight">
       <el-button type="primary" @click="isShowRight = true" v-if="!isShowRight">展开</el-button>
@@ -49,7 +109,12 @@
         v-for="(container) in containers"
         :key="container.id"
         class="container-box"
-        :style="{ width: container.width + 'px', height: container.height + 'px' }"
+        :style="{
+          width: container.width + '%',
+          height: container.height + 'px',
+          border: container.showBorder ? parseInt(container.borderWidth) + 'px' + ' solid #000' : 'none',
+          borderRadius: container.showRadius ? parseInt(container.borderRadius) + 'px' : '0px',
+        }"
         @click="selectContainer(container.id)"
     >
       <div class="container-box-child"
@@ -59,7 +124,7 @@
            @click="selectChild(container.id,child.id)"
       >
         <template v-if="child.type === 0">
-          <el-input :style="{ width: childSize }" v-model="child.height" />
+          <el-input :style="{ width: child.width + 'px' }" v-model="child.width" />
         </template>
         <template v-else>
           <!-- 其他类型的子元素渲染 -->
@@ -80,8 +145,7 @@ export default {
       isShowRight: true,
 
       generateIndex: 0,
-      width: 400,
-      height: 500,
+      childType: '',// 生成元素的类型（下拉选择）
       containers: [],
       selectedContainer: {}, // 临时容器对象
       selectedChild: {}, // 临时容器子元素对象
@@ -110,8 +174,13 @@ export default {
       const newContainer = {
         id: this.generateIndex,
         isContainer: true,
-        width: parseInt(this.width),
-        height: parseInt(this.height),
+        width: 60,// 百分比显示
+        height: 500,// px显示
+        showBorder: true,// 显示边框
+        borderWidth: 1,// 边框粗度
+        showRadius: true,// 显示圆角
+        borderRadius: 1,// 圆角度数
+
         child: []
       };
       this.generateIndex++;
@@ -160,11 +229,6 @@ export default {
       this.selectedChild = this.containers[containIndex].child[childIndex];
     },
 
-    // 调整容器大小逻辑
-    resizeContainer() {
-
-    },
-
     // 删除容器/元素 type:container-true  child-false
     deleteGenerate(type,generateId) {
       if (generateId === null || generateId === '' || generateId === undefined) {
@@ -175,6 +239,7 @@ export default {
       if (type) {
         deleteObj = this.containers;
         this.selectedContainer = {};// 清空临时变量
+        this.selectedChild = {};// 清空临时变量
       } else {
         deleteObj = this.containers[this.getTargetIndex(this.containers,this.selectedContainer.id)].child;
         this.selectedChild = {};// 清空临时变量
@@ -246,16 +311,15 @@ export default {
 .sidebar-right-show {
   background-color: rgba(79, 115, 231, 0.5);
   height: 100%;
-  width: 120px;
+  width: 200px;
 }
 
 .content {
   margin-top: 48px;
-  border: solid 4px;
   background-color: aquamarine;
   position: relative;
   z-index: 0;
-  padding: 4px;
+  /*padding: 4px;*/
   display: flex;
   flex-direction: column; /* 将子元素垂直排列 */
   justify-content: center;
@@ -271,8 +335,10 @@ export default {
   margin-bottom: 1px;
 }
 
-.delete-button {
+.from-button {
+  margin: 0px;
   margin-top: 10px;
+  width: 110px;
 }
 
 .container-box-child {
@@ -280,5 +346,22 @@ export default {
   margin: 0;
   padding: 0;
   float: left;
+}
+
+.input-right {
+  margin: 0px;
+  margin-top: 4px;
+  width: 120px;
+
+}
+
+.text-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.align-right {
+  margin-right: 10px;
 }
 </style>
