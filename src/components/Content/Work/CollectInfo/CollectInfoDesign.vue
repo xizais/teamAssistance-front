@@ -36,8 +36,10 @@
   <!-- 右侧半透明盒子 -->
   <div>
     <div class="sidebar-right-show" v-if="isShowRight"  style="text-align: right;">
+      <el-button v-if="isContainer" type="primary" @click="isContainer = false" style="margin-bottom: 10px">切换元素</el-button>
+      <el-button v-if="!isContainer" type="primary" @click="isContainer = true" style="margin-bottom: 10px">切换容器</el-button>
       <el-button type="primary" @click="isShowRight = false" style="margin-bottom: 10px">收回</el-button>
-      <template v-if="this.selectedContainer.isContainer">
+      <template v-if="isContainer&&selectedContainer.isContainer">
         <el-row>
           <el-col :span="9" class="text-right">
             <el-text class="align-right">容器宽度:</el-text>
@@ -97,10 +99,123 @@
             </el-col>
           </template>
 
+          <el-button class="reset-button" type="primary" @click="resetMeta('container')">重置</el-button>
         </el-row>
       </template>
 
-      <template>
+      <template v-if="!isContainer&&selectedChild.type==='input'">
+        <el-row>
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">顶部距离:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.marginTop" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">底部距离:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.marginBottom" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">左边距离:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.marginLeft" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">右边距离:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.marginRight" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">边框显示:</el-text>
+          </el-col>
+          <el-radio-group v-model="selectedChild.showBorder">
+            <el-col :span="10">
+              <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
+            </el-col>
+            <el-col :span="14">
+              <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
+            </el-col>
+          </el-radio-group>
+
+          <template v-if="selectedChild.showBorder">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">边框大小:</el-text>
+            </el-col>
+            <el-col :span="15">
+              <el-input class="input-right" v-model="selectedChild.borderWidth" placeholder="输入大小(px)"></el-input>
+            </el-col>
+          </template>
+
+          <template v-if="selectedChild.showBorder">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">圆角展示:</el-text>
+            </el-col>
+            <el-radio-group v-model="selectedChild.showRadius">
+              <el-col :span="10">
+                <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
+              </el-col>
+              <el-col :span="14">
+                <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
+              </el-col>
+            </el-radio-group>
+          </template>
+
+          <template v-if="selectedChild.showBorder&&selectedChild.showRadius">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">圆角程度:</el-text>
+            </el-col>
+            <el-col :span="15">
+              <el-input class="input-right" v-model="selectedChild.borderRadius" placeholder="输入大小(px)"></el-input>
+            </el-col>
+          </template>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">内距大小:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.padding" placeholder="输入大小(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体大小:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.fontSize" placeholder="输入大小(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">默认文本:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.text" placeholder="输入文本"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">默认提示:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.placeholder" placeholder="输入提示"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字数限制:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.maxLength" placeholder="输入个数"></el-input>
+          </el-col>
+
+          <el-button class="reset-button" type="primary" @click="resetMeta('input')">重置</el-button>
+        </el-row>
+      </template>
+      <template v-if="!isContainer&&      1">
 
       </template>
     </div>
@@ -125,21 +240,32 @@
         @click="selectContainer(container.id)"
     >
       <div class="container-box-child"
-          v-for="(child) in container.child"
+           v-for="(child) in container.child"
            :key="child.id"
            :style="{
              width: child.width + 'px',
-             height: child.height + 'px'
+             height: child.height + 'px',
+             marginTop: child.marginTop + 'px',
+             marginBottom: child.marginBottom + 'px',
+             marginLeft: child.marginLeft + 'px',
+             marginRight: child.marginRight + 'px',
+             border: child.showBorder ? parseInt(child.borderWidth) + 'px' + ' solid #000' : 'none',
+             borderRadius: child.showRadius ? parseInt(child.borderRadius) + 'px' : '0px',
+             padding: child.padding
            }"
-           @click="selectChild(container.id,child.id)"
+           @click="selectChild(container.id, child.id)"
       >
-        <template v-if="child.type === 0">
+        <template v-if="child.type === 'input'">
           <el-input
               :style="{
-                 width: child.width + 'px',
-                 height: child.height + 'px'
+                width: child.width + 'px',
+                height: child.height + 'px',
+                fontSize: child.fontSize + 'px'
               }"
-              v-model="child.width" />
+              v-model="child.text"
+              :placeholder="child.placeholder"
+              :maxlength="child.maxLength"
+          />
         </template>
         <template v-else>
           <!-- 其他类型的子元素渲染 -->
@@ -158,6 +284,7 @@ export default {
     return {
       isShowLeft: true,
       isShowRight: true,
+      isContainer: true,
 
       generateIndex: 0,
       childType: '',// 生成元素的类型（下拉选择）
@@ -170,6 +297,34 @@ export default {
     // 返回上一页
     goBack() {
       this.$router.go(-1);
+    },
+
+    // 重置容器或元素
+    resetMeta(type) {
+      if (type === 'container') {
+        const containerId = this.selectedContainer.id;
+        this.selectedContainer = {
+          id: containerId,
+          isContainer: true,
+          width: 60,// 百分比显示
+          height: 500,// px显示
+          showBorder: true,// 显示边框
+          borderWidth: 1,// 边框粗度
+          showRadius: true,// 显示圆角
+          borderRadius: 1,// 圆角度数
+          child: []
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        this.containers[containerIndex] = this.selectedContainer;
+      }
+      if (type === 'input') {
+        // 记得修改！！
+
+
+
+
+
+      }
     },
 
     // 重置表单逻辑
@@ -211,16 +366,29 @@ export default {
 
         let newChild = {};
         // 根据生成元素类型生成相应默认子元素
-        if (type === 'text') {
+        if (type === 'input') {
           newChild = {
             id: this.generateIndex,
             isContainer: false,
             width: parseInt(200),
             height: parseInt(30),
-            type: 0,
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 10,
+            showBorder: true,
+            borderWidth: 1,
+            showRadius: true,
+            borderRadius: 1,
+            padding: 0,
+            fontSize: 14,
+            text: '',
+            placeholder: '请输入内容',
+            maxLength: 10,
+            type: type,
           };
         }
-        if (type === 'input') {
+        if (type === 'text') {
           ElMessage.warning('input！');
           newChild = {
             id: this.generateIndex,
@@ -402,5 +570,10 @@ export default {
 
 .align-right {
   margin-right: 10px;
+}
+
+.reset-button {
+  margin-top: 20px;
+  margin-left: 70px;
 }
 </style>
