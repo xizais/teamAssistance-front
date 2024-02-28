@@ -23,7 +23,7 @@
           <el-option label="单选框" value="radio"></el-option>
           <el-option label="多选框" value="checkbox"></el-option>
         </el-select>
-        <el-button class="from-button" @click="addChild(this.selectedContainer.id)">生成元素</el-button>
+        <el-button class="from-button" @click="addChild(this.selectedContainer.id,this.childType)">生成元素</el-button>
         <el-button class="from-button" @click="deleteGenerate(true,selectedContainer.id)">删除选定容器</el-button>
         <el-button class="from-button" @click="deleteGenerate(false,selectedChild.id)">删除选定元素</el-button>
       </div>
@@ -36,66 +36,73 @@
   <!-- 右侧半透明盒子 -->
   <div>
     <div class="sidebar-right-show" v-if="isShowRight"  style="text-align: right;">
-      <el-button type="primary" @click="isShowRight = false">收回</el-button>
-      <el-row>
-        <el-col :span="9" class="text-right">
-          <el-text class="align-right">容器宽度:</el-text>
-        </el-col>
-        <el-col :span="15">
-          <el-input class="input-right" v-model="selectedContainer.width" placeholder="输入宽度(%)"></el-input>
-        </el-col>
-
-        <el-col :span="9" class="text-right">
-          <el-text class="align-right">容器高度:</el-text>
-        </el-col>
-        <el-col :span="15">
-          <el-input class="input-right" v-model="selectedContainer.height" placeholder="输入高度(px)"></el-input>
-        </el-col>
-
-        <el-col :span="9" class="text-right">
-          <el-text class="align-right">边框展示:</el-text>
-        </el-col>
-        <el-radio-group v-model="selectedContainer.showBorder">
-          <el-col :span="10">
-            <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
-          </el-col>
-          <el-col :span="14">
-            <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
-          </el-col>
-        </el-radio-group>
-
-        <template v-if="selectedContainer.showBorder">
+      <el-button type="primary" @click="isShowRight = false" style="margin-bottom: 10px">收回</el-button>
+      <template v-if="this.selectedContainer.isContainer">
+        <el-row>
           <el-col :span="9" class="text-right">
-            <el-text class="align-right">边框粗度:</el-text>
+            <el-text class="align-right">容器宽度:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedContainer.borderWidth" placeholder="输入边框粗度(px)"></el-input>
+            <el-input class="input-right" v-model="selectedContainer.width" placeholder="输入宽度(%)"></el-input>
           </el-col>
-        </template>
 
-        <el-col :span="9" class="text-right">
-          <el-text class="align-right">圆角展示:</el-text>
-        </el-col>
-        <el-radio-group v-model="selectedContainer.showRadius">
-          <el-col :span="10">
-            <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
-          </el-col>
-          <el-col :span="14">
-            <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
-          </el-col>
-        </el-radio-group>
-
-        <template v-if="selectedContainer.showRadius">
           <el-col :span="9" class="text-right">
-            <el-text class="align-right">圆角程度:</el-text>
+            <el-text class="align-right">容器高度:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedContainer.borderRadius" placeholder="输入圆角程度(px)"></el-input>
+            <el-input class="input-right" v-model="selectedContainer.height" placeholder="输入高度(px)"></el-input>
           </el-col>
-        </template>
 
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">边框展示:</el-text>
+          </el-col>
+          <el-radio-group v-model="selectedContainer.showBorder">
+            <el-col :span="10">
+              <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
+            </el-col>
+            <el-col :span="14">
+              <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
+            </el-col>
+          </el-radio-group>
 
-      </el-row>
+          <template v-if="selectedContainer.showBorder">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">边框粗度:</el-text>
+            </el-col>
+            <el-col :span="15">
+              <el-input class="input-right" v-model="selectedContainer.borderWidth" placeholder="输入边框粗度(px)"></el-input>
+            </el-col>
+          </template>
+
+          <template v-if="selectedContainer.showBorder">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">圆角展示:</el-text>
+            </el-col>
+            <el-radio-group v-model="selectedContainer.showRadius">
+              <el-col :span="10">
+                <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
+              </el-col>
+              <el-col :span="14">
+                <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
+              </el-col>
+            </el-radio-group>
+          </template>
+
+          <template v-if="selectedContainer.showBorder&&selectedContainer.showRadius">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">圆角程度:</el-text>
+            </el-col>
+            <el-col :span="15">
+              <el-input class="input-right" v-model="selectedContainer.borderRadius" placeholder="输入圆角程度(px)"></el-input>
+            </el-col>
+          </template>
+
+        </el-row>
+      </template>
+
+      <template>
+
+      </template>
     </div>
     <div class="sidebar-right-hidden" v-if="!isShowRight">
       <el-button type="primary" @click="isShowRight = true" v-if="!isShowRight">展开</el-button>
@@ -120,11 +127,19 @@
       <div class="container-box-child"
           v-for="(child) in container.child"
            :key="child.id"
-           :style="{ width: child.width + 'px', height: child.height + 'px' }"
+           :style="{
+             width: child.width + 'px',
+             height: child.height + 'px'
+           }"
            @click="selectChild(container.id,child.id)"
       >
         <template v-if="child.type === 0">
-          <el-input :style="{ width: child.width + 'px' }" v-model="child.width" />
+          <el-input
+              :style="{
+                 width: child.width + 'px',
+                 height: child.height + 'px'
+              }"
+              v-model="child.width" />
         </template>
         <template v-else>
           <!-- 其他类型的子元素渲染 -->
@@ -180,7 +195,6 @@ export default {
         borderWidth: 1,// 边框粗度
         showRadius: true,// 显示圆角
         borderRadius: 1,// 圆角度数
-
         child: []
       };
       this.generateIndex++;
@@ -188,21 +202,46 @@ export default {
     },
 
     // 生成容器子元素
-    addChild(containId) {
+    addChild(containId,type) {
       if (containId === null || containId === '' || containId === undefined) {
           ElMessage.warning('请选择容器！');
+      } else if (type === null || type === '' || type === undefined){
+        ElMessage.warning('请选择生成元素类型！');
       } else {
 
+        let newChild = {};
         // 根据生成元素类型生成相应默认子元素
-
-
-        const newChild = {
-          id: this.generateIndex,
-          isContainer: false,
-          width: parseInt(100),
-          height: parseInt(200),
-          type: 0,
-        };
+        if (type === 'text') {
+          newChild = {
+            id: this.generateIndex,
+            isContainer: false,
+            width: parseInt(200),
+            height: parseInt(30),
+            type: 0,
+          };
+        }
+        if (type === 'input') {
+          ElMessage.warning('input！');
+          newChild = {
+            id: this.generateIndex,
+            isContainer: false,
+            width: parseInt(200),
+            height: parseInt(200),
+            type: 0,
+          };
+        }
+        if (type === 'select') {
+          ElMessage.warning('请选择容器！');
+        }
+        if (type === 'textarea') {
+          ElMessage.warning('textarea！');
+        }
+        if (type === 'radio') {
+          ElMessage.warning('radio！');
+        }
+        if (type === 'checkbox') {
+          ElMessage.warning('checkbox！');
+        }
 
         // 存入子元素
         const containIndex = this.getTargetIndex(this.containers,containId);
