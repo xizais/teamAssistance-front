@@ -39,7 +39,7 @@
       <el-button v-if="isContainer" type="primary" @click="isContainer = false" style="margin-bottom: 10px">切换元素</el-button>
       <el-button v-if="!isContainer" type="primary" @click="isContainer = true" style="margin-bottom: 10px">切换容器</el-button>
       <el-button type="primary" @click="isShowRight = false" style="margin-bottom: 10px">收回</el-button>
-      <template v-if="isContainer&&selectedContainer.isContainer">
+      <template v-if="isContainer&&selectedContainer.type==='container'">
         <el-row>
           <el-col :span="9" class="text-right">
             <el-text class="align-right">容器宽度:</el-text>
@@ -104,6 +104,53 @@
       </template>
 
       <template v-if="!isContainer&&selectedChild.type==='input'">
+        <el-row>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体大小:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.fontSize" placeholder="输入大小(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">默认文本:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.defaultText" placeholder="输入文本"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">默认提示:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.placeholder" placeholder="输入提示"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">最小字数:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.minlength" placeholder="输入个数"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">最大字数:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.maxLength" placeholder="输入个数"></el-input>
+          </el-col>
+
+        </el-row>
+      </template>
+
+
+      <template v-if="!isContainer&&      1">
+
+      </template>
+
+<!--      元素外部盒子动态样式配置设置-->
+      <template v-if="!isContainer&&selectedChild.id!==undefined">
         <el-row>
           <el-col :span="9" class="text-right">
             <el-text class="align-right">顶部距离:</el-text>
@@ -184,39 +231,8 @@
             <el-input class="input-right" v-model="selectedChild.padding" placeholder="输入大小(px)"></el-input>
           </el-col>
 
-          <el-col :span="9" class="text-right">
-            <el-text class="align-right">字体大小:</el-text>
-          </el-col>
-          <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.fontSize" placeholder="输入大小(px)"></el-input>
-          </el-col>
-
-          <el-col :span="9" class="text-right">
-            <el-text class="align-right">默认文本:</el-text>
-          </el-col>
-          <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.text" placeholder="输入文本"></el-input>
-          </el-col>
-
-          <el-col :span="9" class="text-right">
-            <el-text class="align-right">默认提示:</el-text>
-          </el-col>
-          <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.placeholder" placeholder="输入提示"></el-input>
-          </el-col>
-
-          <el-col :span="9" class="text-right">
-            <el-text class="align-right">字数限制:</el-text>
-          </el-col>
-          <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.maxLength" placeholder="输入个数"></el-input>
-          </el-col>
-
-          <el-button class="reset-button" type="primary" @click="resetMeta('input')">重置</el-button>
+          <el-button class="reset-button" type="primary" @click="resetMeta(selectedChild.type)" style="margin-bottom: 100px">重置</el-button>
         </el-row>
-      </template>
-      <template v-if="!isContainer&&      1">
-
       </template>
     </div>
     <div class="sidebar-right-hidden" v-if="!isShowRight">
@@ -257,13 +273,19 @@
       >
         <template v-if="child.type === 'input'">
           <el-input
+              type="text"
               :style="{
                 width: child.width + 'px',
                 height: child.height + 'px',
-                fontSize: child.fontSize + 'px'
+                fontSize: child.fontSize + 'px',
+                color: 'red',
+                fontWeight: child.bold ? 'bold' : 'normal',
+                fontFamily: child.fontFamily,
+                textAlign: child.textAlign
               }"
-              v-model="child.text"
+              v-model="child.defaultText"
               :placeholder="child.placeholder"
+              :minlength="child.minlength"
               :maxlength="child.maxLength"
           />
         </template>
@@ -305,7 +327,6 @@ export default {
         const containerId = this.selectedContainer.id;
         this.selectedContainer = {
           id: containerId,
-          isContainer: true,
           width: 60,// 百分比显示
           height: 500,// px显示
           showBorder: true,// 显示边框
@@ -317,13 +338,37 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.containers[containerIndex] = this.selectedContainer;
       }
+
       if (type === 'input') {
-        // 记得修改！！
-
-
-
-
-
+        const containerId = this.selectedContainer.id;
+        const childId = this.selectedChild.id;
+        this.selectedChild = {
+          id: childId,
+          width: parseInt(200),
+          height: parseInt(30),
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 10,
+          showBorder: true,
+          borderWidth: 1,
+          showRadius: true,
+          borderRadius: 1,
+          padding: 0,
+          fontSize: 14,
+          textColor: 'black', // 文字颜色
+          bold: false, // 是否加粗
+          fontFamily: 'Arial', // 字体样式
+          defaultText: '',// 默认文本
+          textAlign: 'left',// 文字位置
+          placeholder: '请输入内容',
+          minlength: 0,
+          maxLength: 10,
+          type: type,
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+        this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
     },
 
@@ -343,14 +388,14 @@ export default {
     addContainer() {
       const newContainer = {
         id: this.generateIndex,
-        isContainer: true,
         width: 60,// 百分比显示
         height: 500,// px显示
         showBorder: true,// 显示边框
         borderWidth: 1,// 边框粗度
         showRadius: true,// 显示圆角
         borderRadius: 1,// 圆角度数
-        child: []
+        child: [],
+        type: 'container'
       };
       this.generateIndex++;
       this.containers.push(newContainer);
@@ -369,7 +414,6 @@ export default {
         if (type === 'input') {
           newChild = {
             id: this.generateIndex,
-            isContainer: false,
             width: parseInt(200),
             height: parseInt(30),
             marginTop: 0,
@@ -382,8 +426,13 @@ export default {
             borderRadius: 1,
             padding: 0,
             fontSize: 14,
-            text: '',
+            textColor: 'black', // 文字颜色
+            bold: false, // 是否加粗
+            fontFamily: 'Arial', // 字体样式
+            defaultText: '',// 默认文本
+            textAlign: 'left',// 文字位置
             placeholder: '请输入内容',
+            minlength: 0,
             maxLength: 10,
             type: type,
           };
@@ -392,7 +441,6 @@ export default {
           ElMessage.warning('input！');
           newChild = {
             id: this.generateIndex,
-            isContainer: false,
             width: parseInt(200),
             height: parseInt(200),
             type: 0,
@@ -519,6 +567,7 @@ export default {
   background-color: rgba(79, 115, 231, 0.5);
   height: 100%;
   width: 200px;
+  overflow: auto;
 }
 
 .content {
@@ -543,7 +592,7 @@ export default {
 }
 
 .from-button {
-  margin: 0px;
+  margin: 0;
   margin-top: 10px;
   width: 110px;
 }
@@ -556,7 +605,7 @@ export default {
 }
 
 .input-right {
-  margin: 0px;
+  margin: 0;
   margin-top: 4px;
   width: 120px;
 
