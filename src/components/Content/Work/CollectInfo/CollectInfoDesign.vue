@@ -45,14 +45,14 @@
             <el-text class="align-right">容器宽度:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedContainer.width" placeholder="输入宽度(%)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedContainer.width" placeholder="输入宽度(%)"></el-input>
           </el-col>
 
           <el-col :span="9" class="text-right">
             <el-text class="align-right">容器高度:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedContainer.height" placeholder="输入高度(px)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedContainer.height" placeholder="输入高度(px)"></el-input>
           </el-col>
 
           <el-col :span="9" class="text-right">
@@ -72,7 +72,7 @@
               <el-text class="align-right">边框粗度:</el-text>
             </el-col>
             <el-col :span="15">
-              <el-input class="input-right" v-model="selectedContainer.borderWidth" placeholder="输入边框粗度(px)"></el-input>
+              <el-input type="number" class="input-right" v-model="selectedContainer.borderWidth" placeholder="输入边框粗度(px)"></el-input>
             </el-col>
           </template>
 
@@ -95,7 +95,7 @@
               <el-text class="align-right">圆角程度:</el-text>
             </el-col>
             <el-col :span="15">
-              <el-input class="input-right" v-model="selectedContainer.borderRadius" placeholder="输入圆角程度(px)"></el-input>
+              <el-input type="number" class="input-right" v-model="selectedContainer.borderRadius" placeholder="输入圆角程度(px)"></el-input>
             </el-col>
           </template>
 
@@ -110,7 +110,51 @@
             <el-text class="align-right">字体大小:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.fontSize" placeholder="输入大小(px)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.fontSize" placeholder="输入大小(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体颜色:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-select class="input-right" v-model="selectedChild.textColor" placeholder="请选择">
+              <el-option label="黑色" value="black"></el-option>
+              <el-option label="红色" value="red"></el-option>
+              <el-option label="蓝色" value="blue"></el-option>
+              <el-option label="橙色" value="orange"></el-option>
+              <el-option label="绿色" value="green"></el-option>
+            </el-select>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体粗细:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedChild.fontWeight" placeholder=""></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体类型:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-select class="input-right" v-model="selectedChild.fontFamily" placeholder="请选择">
+              <el-option label="微软雅黑" value="Microsoft YaHei"></el-option>
+              <el-option label="宋体" value="Songti"></el-option>
+              <el-option label="仿宋" value="Fangsong"></el-option>
+              <el-option label="楷体" value="Kaiti"></el-option>
+              <el-option label="幼圆" value="Youyuan"></el-option>
+            </el-select>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">文本位置:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-select class="input-right" v-model="selectedChild.textAlign" placeholder="请选择">
+              <el-option label="居左" value="left"></el-option>
+              <el-option label="居中" value="center"></el-option>
+              <el-option label="居右" value="right"></el-option>
+            </el-select>
           </el-col>
 
           <el-col :span="9" class="text-right">
@@ -131,16 +175,27 @@
             <el-text class="align-right">最小字数:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.minlength" placeholder="输入个数"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.minlength" placeholder="输入个数"></el-input>
           </el-col>
 
           <el-col :span="9" class="text-right">
             <el-text class="align-right">最大字数:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.maxLength" placeholder="输入个数"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.maxLength" placeholder="输入个数"></el-input>
           </el-col>
 
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">是否必填:</el-text>
+          </el-col>
+          <el-radio-group v-model="selectedChild.isNeed">
+            <el-col :span="10">
+              <el-radio :label="true" style="font-weight: bold;">是</el-radio>
+            </el-col>
+            <el-col :span="14">
+              <el-radio :label="false" style="font-weight: bold;">否</el-radio>
+            </el-col>
+          </el-radio-group>
         </el-row>
       </template>
 
@@ -156,28 +211,28 @@
             <el-text class="align-right">顶部距离:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.marginTop" placeholder="输入距离(px)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.marginTop" placeholder="输入距离(px)"></el-input>
           </el-col>
 
           <el-col :span="9" class="text-right">
             <el-text class="align-right">底部距离:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.marginBottom" placeholder="输入距离(px)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.marginBottom" placeholder="输入距离(px)"></el-input>
           </el-col>
 
           <el-col :span="9" class="text-right">
             <el-text class="align-right">左边距离:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.marginLeft" placeholder="输入距离(px)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.marginLeft" placeholder="输入距离(px)"></el-input>
           </el-col>
 
           <el-col :span="9" class="text-right">
             <el-text class="align-right">右边距离:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.marginRight" placeholder="输入距离(px)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.marginRight" placeholder="输入距离(px)"></el-input>
           </el-col>
 
           <el-col :span="9" class="text-right">
@@ -197,7 +252,7 @@
               <el-text class="align-right">边框大小:</el-text>
             </el-col>
             <el-col :span="15">
-              <el-input class="input-right" v-model="selectedChild.borderWidth" placeholder="输入大小(px)"></el-input>
+              <el-input type="number" class="input-right" v-model="selectedChild.borderWidth" placeholder="输入大小(px)"></el-input>
             </el-col>
           </template>
 
@@ -220,7 +275,7 @@
               <el-text class="align-right">圆角程度:</el-text>
             </el-col>
             <el-col :span="15">
-              <el-input class="input-right" v-model="selectedChild.borderRadius" placeholder="输入大小(px)"></el-input>
+              <el-input type="number" class="input-right" v-model="selectedChild.borderRadius" placeholder="输入大小(px)"></el-input>
             </el-col>
           </template>
 
@@ -228,7 +283,7 @@
             <el-text class="align-right">内距大小:</el-text>
           </el-col>
           <el-col :span="15">
-            <el-input class="input-right" v-model="selectedChild.padding" placeholder="输入大小(px)"></el-input>
+            <el-input type="number" class="input-right" v-model="selectedChild.padding" placeholder="输入大小(px)"></el-input>
           </el-col>
 
           <el-button class="reset-button" type="primary" @click="resetMeta(selectedChild.type)" style="margin-bottom: 100px">重置</el-button>
@@ -274,19 +329,22 @@
         <template v-if="child.type === 'input'">
           <el-input
               type="text"
-              :style="{
-                width: child.width + 'px',
-                height: child.height + 'px',
+              :input-style="{
                 fontSize: child.fontSize + 'px',
-                color: 'red',
-                fontWeight: child.bold ? 'bold' : 'normal',
+                color: child.textColor,
+                fontWeight: child.fontWeight,
                 fontFamily: child.fontFamily,
                 textAlign: child.textAlign
               }"
+              :style="{
+                width: child.width + 'px',
+                height: child.height + 'px',
+              }"
               v-model="child.defaultText"
               :placeholder="child.placeholder"
-              :minlength="child.minlength"
-              :maxlength="child.maxLength"
+              :minlength=child.minlength
+              :maxlength=child.maxLength
+              :rules="{ required: true, message: '请输入内容', trigger: 'blur' }"
           />
         </template>
         <template v-else>
@@ -313,6 +371,8 @@ export default {
       containers: [],
       selectedContainer: {}, // 临时容器对象
       selectedChild: {}, // 临时容器子元素对象
+      input:'',
+      red:'pink'
     };
   },
   methods: {
@@ -357,13 +417,14 @@ export default {
           padding: 0,
           fontSize: 14,
           textColor: 'black', // 文字颜色
-          bold: false, // 是否加粗
-          fontFamily: 'Arial', // 字体样式
+          fontWeight: 400, // 字体粗细
+          fontFamily: 'Microsoft YaHei', // 字体样式
           defaultText: '',// 默认文本
           textAlign: 'left',// 文字位置
           placeholder: '请输入内容',
           minlength: 0,
           maxLength: 10,
+          isNeed: false,// 是否必填
           type: type,
         };
         const containerIndex = this.getTargetIndex(this.containers,containerId);
@@ -427,13 +488,14 @@ export default {
             padding: 0,
             fontSize: 14,
             textColor: 'black', // 文字颜色
-            bold: false, // 是否加粗
-            fontFamily: 'Arial', // 字体样式
+            fontWeight: 400, // 字体粗细
+            fontFamily: 'Microsoft YaHei', // 字体样式
             defaultText: '',// 默认文本
             textAlign: 'left',// 文字位置
             placeholder: '请输入内容',
             minlength: 0,
             maxLength: 10,
+            isNeed: false,// 是否必填
             type: type,
           };
         }
@@ -566,7 +628,7 @@ export default {
 .sidebar-right-show {
   background-color: rgba(79, 115, 231, 0.5);
   height: 100%;
-  width: 200px;
+  width: 205px;
   overflow: auto;
 }
 
