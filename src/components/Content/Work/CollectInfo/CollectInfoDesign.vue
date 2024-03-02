@@ -7,6 +7,7 @@
     <span class="title">信息收集表单设计</span>
     <el-button class="nav-button" @click="resetForm">重置</el-button>
     <el-button class="nav-button" @click="saveForm">保存</el-button>
+    <el-button class="nav-button" @click="submitForm">提交</el-button>
   </div>
 
   <!-- 左侧半透明盒子 -->
@@ -22,6 +23,7 @@
           <el-option label="文本域" value="textarea"></el-option>
           <el-option label="单选框" value="radio"></el-option>
           <el-option label="多选框" value="checkbox"></el-option>
+          <el-option label="时间器" value="time"></el-option>
         </el-select>
         <el-button class="from-button" @click="addChild(this.selectedContainer.id,this.childType)">生成元素</el-button>
         <el-button class="from-button" @click="deleteGenerate(true,selectedContainer.id)">删除选定容器</el-button>
@@ -56,7 +58,7 @@
           </el-col>
 
           <el-col :span="9" class="text-right">
-            <el-text class="align-right">边框展示:</el-text>
+            <el-text class="align-right">边框:</el-text>
           </el-col>
           <el-radio-group v-model="selectedContainer.showBorder">
             <el-col :span="10">
@@ -103,7 +105,8 @@
         </el-row>
       </template>
 
-      <template v-if="!isContainer&&selectedChild.type==='input'">
+      <!--input\textarea组件配置-->
+      <template v-if="!isContainer&&(selectedChild.type==='input' || selectedChild.type==='textarea')">
         <el-row>
 
           <el-col :span="9" class="text-right">
@@ -172,13 +175,6 @@
           </el-col>
 
           <el-col :span="9" class="text-right">
-            <el-text class="align-right">最小字数:</el-text>
-          </el-col>
-          <el-col :span="15">
-            <el-input type="number" class="input-right" v-model="selectedChild.minlength" placeholder="输入个数"></el-input>
-          </el-col>
-
-          <el-col :span="9" class="text-right">
             <el-text class="align-right">最大字数:</el-text>
           </el-col>
           <el-col :span="15">
@@ -199,14 +195,155 @@
         </el-row>
       </template>
 
+      <!--text组件配置-->
+      <template v-if="!isContainer&&selectedChild.type==='text'">
+        <el-row>
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">文本位置:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-select class="input-right" v-model="selectedChild.textAlign" placeholder="请选择">
+              <el-option label="居左" value="left"></el-option>
+              <el-option label="居中" value="center"></el-option>
+              <el-option label="居右" value="right"></el-option>
+            </el-select>
+          </el-col>
 
-      <template v-if="!isContainer&&      1">
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">文本类型:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-select class="input-right" v-model="selectedChild.textType" placeholder="请选择">
+              <el-option label="none" value="none"></el-option>
+              <el-option label="primary" value="primary"></el-option>
+              <el-option label="success" value="success"></el-option>
+              <el-option label="warning" value="warning"></el-option>
+              <el-option label="danger" value="danger"></el-option>
+              <el-option label="info" value="info"></el-option>
+            </el-select>
+          </el-col>
 
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体大小:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedChild.fontSize" placeholder="输入大小"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体粗细:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedChild.fontWeight" placeholder="输入程度"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">字体类型:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-select class="input-right" v-model="selectedChild.fontFamily" placeholder="请选择">
+              <el-option label="微软雅黑" value="Microsoft YaHei"></el-option>
+              <el-option label="宋体" value="Songti"></el-option>
+              <el-option label="仿宋" value="Fangsong"></el-option>
+              <el-option label="楷体" value="Kaiti"></el-option>
+              <el-option label="幼圆" value="Youyuan"></el-option>
+            </el-select>
+          </el-col>
+        </el-row>
       </template>
 
-<!--      元素外部盒子动态样式配置设置-->
+      <!--select\radio\checkbox组件配置-->
+      <template v-if="!isContainer&&(selectedChild.type==='select' || selectedChild.type==='radio' || selectedChild.type==='checkbox')">
+        <el-button type="primary" @click="addOption(selectedContainer.id,selectedChild.id)" style="margin-bottom: 10px">增加选项</el-button>
+        <el-row>
+         <template
+          v-for="(option,optionIndex) in selectedChild.options"
+          :key="option.id"
+         >
+           <el-col :span="2" class="text-right">
+             <el-icon class="hoverable" size="12" @click="deleteOption(selectedContainer.id,selectedChild.id,optionIndex)"><Delete /></el-icon>
+           </el-col>
+           <el-col :span="7" class="text-right">
+             <el-text class="align-right">选项{{optionIndex+1}}:</el-text>
+           </el-col>
+           <el-col :span="15">
+             <el-input class="input-right" v-model="option.content" placeholder="输入选项值" maxlength="20"></el-input>
+           </el-col>
+         </template>
+
+          <template v-if="selectedChild.type==='radio' || selectedChild.type==='checkbox'">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">内边框:</el-text>
+            </el-col>
+            <el-radio-group v-model="selectedChild.showInnerBorder">
+              <el-col :span="10">
+                <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
+              </el-col>
+              <el-col :span="14">
+                <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
+              </el-col>
+            </el-radio-group>
+          </template>
+
+          <template v-if="selectedChild.type==='checkbox'">
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">最小可选:</el-text>
+            </el-col>
+            <el-col :span="15">
+              <el-input type="number" class="input-right" v-model="selectedChild.minOption" placeholder="输入个数"></el-input>
+            </el-col>
+
+            <el-col :span="9" class="text-right">
+              <el-text class="align-right">最大可选:</el-text>
+            </el-col>
+            <el-col :span="15">
+              <el-input type="number" class="input-right" v-model="selectedChild.maxOption" placeholder="输入个数"></el-input>
+            </el-col>
+          </template>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">是否必填:</el-text>
+          </el-col>
+          <el-radio-group v-model="selectedChild.isNeed">
+            <el-col :span="10">
+              <el-radio :label="true" style="font-weight: bold;">是</el-radio>
+            </el-col>
+            <el-col :span="14">
+              <el-radio :label="false" style="font-weight: bold;">否</el-radio>
+            </el-col>
+          </el-radio-group>
+        </el-row>
+      </template>
+
+      <!--time组件配置-->
+      <template v-if="!isContainer&&selectedChild.type==='time'">
+        <el-row>
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">默认时间:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.defaultTime" placeholder="输入默认时间"></el-input>
+          </el-col>
+        </el-row>
+      </template>
+
+      <!--      元素外部盒子动态样式配置设置-->
       <template v-if="!isContainer&&selectedChild.id!==undefined">
         <el-row>
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">宽度:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedChild.width" placeholder="输入宽度(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">高度:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedChild.height" placeholder="输入高度(px)"></el-input>
+          </el-col>
+
           <el-col :span="9" class="text-right">
             <el-text class="align-right">顶部距离:</el-text>
           </el-col>
@@ -236,7 +373,7 @@
           </el-col>
 
           <el-col :span="9" class="text-right">
-            <el-text class="align-right">边框显示:</el-text>
+            <el-text class="align-right">边框:</el-text>
           </el-col>
           <el-radio-group v-model="selectedChild.showBorder">
             <el-col :span="10">
@@ -279,13 +416,6 @@
             </el-col>
           </template>
 
-          <el-col :span="9" class="text-right">
-            <el-text class="align-right">内距大小:</el-text>
-          </el-col>
-          <el-col :span="15">
-            <el-input type="number" class="input-right" v-model="selectedChild.padding" placeholder="输入大小(px)"></el-input>
-          </el-col>
-
           <el-button class="reset-button" type="primary" @click="resetMeta(selectedChild.type)" style="margin-bottom: 100px">重置</el-button>
         </el-row>
       </template>
@@ -322,10 +452,11 @@
              marginRight: child.marginRight + 'px',
              border: child.showBorder ? parseInt(child.borderWidth) + 'px' + ' solid #000' : 'none',
              borderRadius: child.showRadius ? parseInt(child.borderRadius) + 'px' : '0px',
-             padding: child.padding
            }"
            @click="selectChild(container.id, child.id)"
       >
+
+        <!--input组件显示-->
         <template v-if="child.type === 'input'">
           <el-input
               type="text"
@@ -342,14 +473,109 @@
               }"
               v-model="child.defaultText"
               :placeholder="child.placeholder"
-              :minlength=child.minlength
               :maxlength=child.maxLength
-              :rules="{ required: true, message: '请输入内容', trigger: 'blur' }"
           />
         </template>
-        <template v-else>
-          <!-- 其他类型的子元素渲染 -->
+
+        <!--text组件显示-->
+        <template v-if="child.type === 'text'">
+         <div :style="{textAlign: child.textAlign}">
+           <el-text
+               :type=child.textType
+               :style="{
+                fontSize:child.fontSize+'px',
+                fontWeight: child.fontWeight,
+                fontFamily: child.fontFamily,
+                lineHeight: child.height + 'px',
+          }"
+           >{{ child.defaultText }}</el-text>
+         </div>
         </template>
+
+        <!--select组件显示-->
+        <template v-if="child.type === 'select'">
+          <el-select
+              v-model="child.defaultText"
+              placeholder="请选择"
+              style="width: 100%;height: 100%"
+              @click="selectChild(container.id, child.id)"
+              >
+            <el-option
+                v-for="option in child.options"
+                :key="option.id"
+                :label="option.content"
+                :value="option.content"
+                ></el-option>
+          </el-select>
+        </template>
+
+        <!--textarea组件显示-->
+        <template v-if="child.type === 'textarea'">
+          <el-input
+              v-model="child.defaultText"
+              :input-style="{
+                width: child.width + 'px',
+                height:child.height + 'px',
+                fontSize: child.fontSize + 'px',
+                color: child.textColor,
+                fontWeight: child.fontWeight,
+                fontFamily: child.fontFamily,
+                textAlign: child.textAlign
+              }"
+              show-word-limit
+              type="textarea"
+              :placeholder="child.placeholder"
+              :maxlength=child.maxLength
+          />
+        </template>
+
+        <!--radio组件显示-->
+        <template v-if="child.type === 'radio'">
+          <el-radio-group
+              v-model="child.defaultText"
+              v-for="(option) in child.options"
+              :key="option.id"
+          >
+            <el-radio
+                :label="option.content"
+                value="option.content"
+                :border="child.showInnerBorder"
+            >{{option.content}}</el-radio>
+          </el-radio-group>
+        </template>
+
+        <!--checkbox组件显示-->
+        <template v-if="child.type === 'checkbox'">
+          <el-checkbox-group
+              v-model="child.defaultText.value"
+              :min="child.minOption"
+              :max="child.maxOption"
+          >
+            <el-checkbox
+                v-for="option in child.options"
+                :key="option.id"
+                :label="option.content"
+                :value="option.content"
+                :border="child.showInnerBorder"
+            >{{ option.content }}</el-checkbox
+            >
+          </el-checkbox-group>
+        </template>
+
+        <!--时间组件显示-->
+        <template v-if="child.type === 'time'">
+          <el-date-picker
+              @focus="selectChild(container.id, child.id)"
+              v-model="child.defaultTime"
+              type="datetime"
+              placeholder="请选择日期时间"
+              :style="{
+                width: child.width + 'px',
+                height: child.height + 'px'
+              }"
+          />
+        </template>
+
       </div>
     </div>
   </div>
@@ -357,6 +583,8 @@
 
 <script>
 import {ElMessage} from "element-plus";
+import { ref } from 'vue';
+import {sendRequest} from "@/api";
 
 export default {
   name: "CollectInfoDesign",
@@ -371,8 +599,7 @@ export default {
       containers: [],
       selectedContainer: {}, // 临时容器对象
       selectedChild: {}, // 临时容器子元素对象
-      input:'',
-      red:'pink'
+
     };
   },
   methods: {
@@ -393,10 +620,39 @@ export default {
           borderWidth: 1,// 边框粗度
           showRadius: true,// 显示圆角
           borderRadius: 1,// 圆角度数
+          type: type,
           child: []
         };
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.containers[containerIndex] = this.selectedContainer;
+      }
+
+      if (type === 'text') {
+        const containerId = this.selectedContainer.id;
+        const childId = this.selectedChild.id;
+        this.selectedChild = {
+          id: childId,
+          width: parseInt(200),
+          height: parseInt(30),
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          borderRadius: 1,
+          showBorder: false,
+          borderWidth: 1,
+          showRadius: true,
+          textType: 'none',
+          fontSize: 14,
+          fontWeight: 400, // 字体粗细
+          fontFamily: 'Microsoft YaHei', // 字体样式
+          defaultText: '这是一个文本',// 默认文本
+          textAlign: 'left',// 文字位置
+          type: type,
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+        this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
 
       if (type === 'input') {
@@ -414,7 +670,6 @@ export default {
           borderWidth: 1,
           showRadius: true,
           borderRadius: 1,
-          padding: 0,
           fontSize: 14,
           textColor: 'black', // 文字颜色
           fontWeight: 400, // 字体粗细
@@ -422,7 +677,6 @@ export default {
           defaultText: '',// 默认文本
           textAlign: 'left',// 文字位置
           placeholder: '请输入内容',
-          minlength: 0,
           maxLength: 10,
           isNeed: false,// 是否必填
           type: type,
@@ -431,6 +685,156 @@ export default {
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
+
+      if (type === 'select') {
+        const containerId = this.selectedContainer.id;
+        const childId = this.selectedChild.id;
+        this.selectedChild = {
+          id: childId,
+          width: parseInt(100),
+          height: parseInt(30),
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          borderRadius: 1,
+          showBorder: false,
+          borderWidth: 1,
+          showRadius: true,
+          defaultText: '选项一',// 默认文本
+          isNeed: false,// 是否必填
+          options: [
+            {
+              id: 0,
+              content: '选项一'
+            }
+          ],
+          type: type,
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+        this.containers[containerIndex].child[childIndex] = this.selectedChild;
+      }
+
+      if (type === 'textarea') {
+        const containerId = this.selectedContainer.id;
+        const childId = this.selectedChild.id;
+        this.selectedChild = {
+          id: childId,
+          width: parseInt(300),
+          height: parseInt(100),
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          showBorder: false,
+          borderWidth: 1,
+          showRadius: true,
+          borderRadius: 1,
+          fontSize: 14,
+          textColor: 'black', // 文字颜色
+          fontWeight: 400, // 字体粗细
+          fontFamily: 'Microsoft YaHei', // 字体样式
+          defaultText: '',// 默认文本
+          textAlign: 'left',// 文字位置
+          placeholder: '请输入内容',
+          maxLength: 100,
+          isNeed: false,// 是否必填
+          type: type,
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+        this.containers[containerIndex].child[childIndex] = this.selectedChild;
+      }
+
+      if (type === 'radio') {
+        const containerId = this.selectedContainer.id;
+        const childId = this.selectedChild.id;
+        this.selectedChild = {
+          id: childId,
+          width: parseInt(200),
+          height: parseInt(30),
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          borderRadius: 1,
+          showBorder: false,
+          showInnerBorder: true,// 内边框
+          borderWidth: 1,
+          showRadius: true,
+          defaultText: '选项一',// 默认文本
+          isNeed: false,// 是否必填
+          options: [
+            {
+              id: 0,
+              content: '选项一'
+            }
+          ],
+          type: type,
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+        this.containers[containerIndex].child[childIndex] = this.selectedChild;
+      }
+
+      if (type === 'checkbox') {
+        const containerId = this.selectedContainer.id;
+        const childId = this.selectedChild.id;
+        this.selectedChild = {
+          id: childId,
+          width: parseInt(200),
+          height: parseInt(30),
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          borderRadius: 1,
+          showBorder: false,
+          showInnerBorder: true,// 内边框
+          borderWidth: 1,
+          showRadius: true,
+          minOption: 1,
+          maxOption: 1,
+          defaultText: ref([]),// 默认文本
+          isNeed: false,// 是否必填
+          options: [
+            {
+              id: 0,
+              content: '选项一'
+            }
+          ],
+          type: type,
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+        this.containers[containerIndex].child[childIndex] = this.selectedChild;
+      }
+
+      if (type === 'time') {
+        const containerId = this.selectedContainer.id;
+        const childId = this.selectedChild.id;
+        this.selectedChild = {
+          id: childId,
+          width: parseInt(200),
+          height: parseInt(30),
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          borderRadius: 1,
+          showBorder: false,
+          borderWidth: 1,
+          showRadius: true,
+          defaultTime: '',// 默认时间
+          isNeed: false,// 是否必填
+          type: type,
+        };
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
+        const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+        this.containers[containerIndex].child[childIndex] = this.selectedChild;
+      }
+
     },
 
     // 重置表单逻辑
@@ -443,6 +847,21 @@ export default {
     // 保存表单逻辑
     saveForm() {
 
+    },
+
+    // 提交表单逻辑
+    async submitForm() {
+      try {
+        let test = {
+          container: this.containers
+        }
+        const data = await sendRequest('/CollectInfo/test', 'post', test);
+        // 处理请求成功的数据
+        console.log(data);
+      } catch (error) {
+        // 处理请求失败的错误
+        console.error(error);
+      }
     },
 
     // 生成容器
@@ -480,12 +899,11 @@ export default {
             marginTop: 0,
             marginBottom: 0,
             marginLeft: 0,
-            marginRight: 10,
+            marginRight: 0,
             showBorder: true,
             borderWidth: 1,
             showRadius: true,
             borderRadius: 1,
-            padding: 0,
             fontSize: 14,
             textColor: 'black', // 文字颜色
             fontWeight: 400, // 字体粗细
@@ -493,32 +911,151 @@ export default {
             defaultText: '',// 默认文本
             textAlign: 'left',// 文字位置
             placeholder: '请输入内容',
-            minlength: 0,
             maxLength: 10,
             isNeed: false,// 是否必填
             type: type,
           };
         }
         if (type === 'text') {
-          ElMessage.warning('input！');
           newChild = {
-            id: this.generateIndex,
-            width: parseInt(200),
-            height: parseInt(200),
-            type: 0,
+              id: this.generateIndex,
+              width: parseInt(200),
+              height: parseInt(30),
+              marginTop: 0,
+              marginBottom: 0,
+              marginLeft: 0,
+              marginRight: 0,
+              borderRadius: 1,
+              showBorder: false,
+              borderWidth: 1,
+              showRadius: true,
+              textType: 'none',
+              fontSize: 14,
+              fontWeight: 400, // 字体粗细
+              fontFamily: 'Microsoft YaHei', // 字体样式
+              defaultText: '这是一个文本',// 默认文本
+              textAlign: 'left',// 文字位置
+              type: type,
           };
         }
         if (type === 'select') {
-          ElMessage.warning('请选择容器！');
+          newChild = {
+            id: this.generateIndex,
+            width: parseInt(100),
+            height: parseInt(30),
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            borderRadius: 1,
+            showBorder: false,
+            borderWidth: 1,
+            showRadius: true,
+            defaultText: '选项一',// 默认文本
+            isNeed: false,// 是否必填
+            options: [
+              {
+                id: 0,
+                content: '选项一'
+              }
+            ],
+            type: type,
+          };
         }
         if (type === 'textarea') {
-          ElMessage.warning('textarea！');
+          newChild = {
+            id: this.generateIndex,
+            width: parseInt(300),
+            height: parseInt(100),
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            showBorder: false,
+            borderWidth: 1,
+            showRadius: true,
+            borderRadius: 1,
+            fontSize: 14,
+            textColor: 'black', // 文字颜色
+            fontWeight: 400, // 字体粗细
+            fontFamily: 'Microsoft YaHei', // 字体样式
+            defaultText: '',// 默认文本
+            textAlign: 'left',// 文字位置
+            placeholder: '请输入内容',
+            maxLength: 100,
+            isNeed: false,// 是否必填
+            type: type,
+          };
         }
         if (type === 'radio') {
-          ElMessage.warning('radio！');
+          newChild = {
+            id: this.generateIndex,
+            width: parseInt(200),
+            height: parseInt(30),
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            borderRadius: 1,
+            showBorder: false,
+            showInnerBorder: true,// 内边框
+            borderWidth: 1,
+            showRadius: true,
+            defaultText: '选项一',// 默认文本
+            isNeed: false,// 是否必填
+            options: [
+              {
+                id: 0,
+                content: '选项一'
+              }
+            ],
+            type: type,
+          };
         }
         if (type === 'checkbox') {
-          ElMessage.warning('checkbox！');
+          newChild = {
+            id: this.generateIndex,
+            width: parseInt(200),
+            height: parseInt(30),
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            borderRadius: 1,
+            showBorder: false,
+            showInnerBorder: true,// 内边框
+            borderWidth: 1,
+            showRadius: true,
+            minOption: 1,
+            maxOption: 1,
+            defaultText: ref([]),// 默认文本
+            isNeed: false,// 是否必填
+            options: [
+              {
+                id: 0,
+                content: '选项一'
+              }
+            ],
+            type: type,
+          };
+        }
+        if (type === 'time') {
+          newChild = {
+            id: this.generateIndex,
+            width: parseInt(200),
+            height: parseInt(30),
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            borderRadius: 1,
+            showBorder: false,
+            borderWidth: 1,
+            showRadius: true,
+            defaultTime: '',// 默认时间
+            isNeed: false,// 是否必填
+            type: type,
+          };
         }
 
         // 存入子元素
@@ -526,6 +1063,18 @@ export default {
         this.containers[containIndex].child.push(newChild);
         this.generateIndex++;
       }
+    },
+
+    // 生成选项
+    addOption(containId,childId) {
+      const newContainer = {
+        id: this.generateIndex,
+        content: ''
+      };
+      this.generateIndex++;
+      const containerIndex = this.getTargetIndex(this.containers,containId);
+      const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+      this.containers[containerIndex].child[childIndex].options.push(newContainer);
     },
 
     // 选择容器时
@@ -565,6 +1114,15 @@ export default {
       const index = this.getTargetIndex(deleteObj,generateId);
       if (index !== -1) {
         deleteObj.splice(index, 1);
+      }
+    },
+
+    // 删除下拉选项
+    deleteOption(containerId,childId,optionIndex) {
+      const containerIndex = this.getTargetIndex(this.containers,containerId);
+      const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
+      if (optionIndex !== -1) {
+        this.containers[containerIndex].child[childIndex].options.splice(optionIndex, 1);
       }
     },
 
@@ -637,7 +1195,6 @@ export default {
   background-color: aquamarine;
   position: relative;
   z-index: 0;
-  /*padding: 4px;*/
   display: flex;
   flex-direction: column; /* 将子元素垂直排列 */
   justify-content: center;
@@ -686,5 +1243,10 @@ export default {
 .reset-button {
   margin-top: 20px;
   margin-left: 70px;
+}
+
+.hoverable:hover {
+  background-color: lightyellow;
+  border-radius: 10px;
 }
 </style>
