@@ -24,7 +24,9 @@
         <el-menu-item :index="i.id" v-for="i in item?.child" :key="i.id" @click="open(i.path)">{{ i.name }}</el-menu-item>
       </el-sub-menu>
     </el-menu>
-    <router-view></router-view>
+    <div class="container-right">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -129,5 +131,10 @@ export default {
 .menu {
   width: 150px;
   min-height: 100vh;
+}
+
+.container-right {
+  display: flex;
+  flex-grow: 1;
 }
 </style>
