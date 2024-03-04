@@ -590,8 +590,9 @@ export default {
   name: "CollectInfoDesign",
   data() {
     return {
+      state : null,
       isShowLeft: true,
-      isShowRight: true,
+      isShowRight: false,
       isContainer: true,
 
       generateIndex: 0,
@@ -602,6 +603,21 @@ export default {
 
     };
   },
+
+  // 页面初始化加载
+  mounted() {
+    console.log(this.$route.query.iIFId)
+    this.state = this.$route.query.state;
+    if (this.state === 'edit') {
+      // 这里请求后端数据，并返回给this.containers
+
+
+
+
+      this.containers = [{"id":0,"width":60,"height":500,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":"4","child":[{"id":1,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"borderRadius":1,"showBorder":true,"borderWidth":1,"showRadius":true,"textType":"none","fontSize":14,"fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"这是一个文本","textAlign":"left","type":"text"},{"id":2,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":"4","fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"}],"type":"container"},{"id":3,"width":60,"height":500,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"child":[{"id":4,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"},{"id":5,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"},{"id":6,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"}],"type":"container"}];
+    }
+  },
+
   methods: {
     // 返回上一页
     goBack() {
@@ -1136,12 +1152,12 @@ export default {
 </script>
 <style scoped>
 .navbar {
-  background-color: #eaec9c;
+  background-color: #cbef8e;
   height: 48px;
   padding: 0 20px;
   display: flex;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 8px;
   position: fixed;
   top: 0;
   left: 0;
@@ -1173,6 +1189,7 @@ export default {
   background-color: rgba(79, 115, 231, 0.5);
   height: 100%;
   width: 120px;
+  border-radius: 4px;
 }
 
 .sidebar-right-hidden,.sidebar-right-show {
@@ -1188,11 +1205,12 @@ export default {
   height: 100%;
   width: 205px;
   overflow: auto;
+  border-radius: 4px;
 }
 
 .content {
   margin-top: 48px;
-  background-color: aquamarine;
+  background-color: #c5fad0;
   position: relative;
   z-index: 0;
   display: flex;
@@ -1202,9 +1220,6 @@ export default {
 }
 
 .container-box {
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
   padding: 0;
   border: 1px solid #000;
   margin-bottom: 1px;
