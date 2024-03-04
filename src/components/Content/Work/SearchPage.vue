@@ -6,8 +6,8 @@
       <el-button class="container-button" type="primary" @click="showOther = !showOther">筛选</el-button>
     </div>
     <div class="search-other" v-show="showOther">
-      <el-date-picker v-model="startDate" type="date" placeholder="开始日期" />
-      <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />
+      <el-date-picker v-model="this.startDate" type="date" placeholder="开始日期" />
+      <el-date-picker v-model="this.endDate" type="date" placeholder="结束日期" />
       <el-select v-model="optionValue" placeholder="数据状态" size="large" style="width: 140px">
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -22,7 +22,7 @@ export default {
     return {
       showOther: false,
       startDate: null,
-      endData: null,
+      endDate: null,
       optionValue: null,
       options: [
         {

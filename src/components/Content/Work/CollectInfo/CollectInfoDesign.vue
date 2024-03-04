@@ -592,7 +592,7 @@ export default {
     return {
       state : null,
       isShowLeft: true,
-      isShowRight: true,
+      isShowRight: false,
       isContainer: true,
 
       generateIndex: 0,
@@ -1152,12 +1152,12 @@ export default {
 </script>
 <style scoped>
 .navbar {
-  background-color: #eaec9c;
+  background-color: #cbef8e;
   height: 48px;
   padding: 0 20px;
   display: flex;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 8px;
   position: fixed;
   top: 0;
   left: 0;
@@ -1189,6 +1189,7 @@ export default {
   background-color: rgba(79, 115, 231, 0.5);
   height: 100%;
   width: 120px;
+  border-radius: 4px;
 }
 
 .sidebar-right-hidden,.sidebar-right-show {
@@ -1204,11 +1205,12 @@ export default {
   height: 100%;
   width: 205px;
   overflow: auto;
+  border-radius: 4px;
 }
 
 .content {
   margin-top: 48px;
-  background-color: aquamarine;
+  background-color: #c5fad0;
   position: relative;
   z-index: 0;
   display: flex;
@@ -1218,9 +1220,6 @@ export default {
 }
 
 .container-box {
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
   padding: 0;
   border: 1px solid #000;
   margin-bottom: 1px;
