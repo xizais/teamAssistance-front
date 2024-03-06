@@ -1,24 +1,25 @@
-import axios from 'axios';
-import { JSONObject } from 'fast-json-parse';
+//对axios进行二次封装
+import axios from 'axios'
 
-const api = axios.create({
+const requests = axios.create({
     baseURL: 'http://localhost:8099/api',
-    // 可根据需要设置其他默认配置，如请求头等
-});
+    // baseURL: "/api",
+    timeout: 5000
+})
 
-export const sendRequest = async (url, method, data) => {
-    try {
-        const response = await api.request({
-            url,
-            method,
-            data,
-        });
+//请求拦截
+requests.interceptors.request.use((config) => {
+    config.headers['Content-Type'] = 'application/json';
+    return config
+})
 
-        // 手动转换为 com.alibaba.fastjson.JSONObject 类型
-        const jsonObject = new JSONObject(response.data);
+//响应拦截
+requests.interceptors.response.use((response) => {
+        //进度条结束
+        return response.data
+    },
+    (error) => {
+        return error.message
+    })
 
-        return jsonObject;
-    } catch (error) {
-        throw new Error(error.message);
-    }
-};
+export default requests

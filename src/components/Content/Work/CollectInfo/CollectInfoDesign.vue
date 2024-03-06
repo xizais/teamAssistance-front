@@ -584,13 +584,14 @@
 <script>
 import {ElMessage} from "element-plus";
 import { ref } from 'vue';
-import {sendRequest} from "@/api";
+import {reqSearchInfo} from "@/request";
 
 export default {
   name: "CollectInfoDesign",
   data() {
     return {
-      state : null,
+      iIFId: 0,
+      state: null,
       isShowLeft: true,
       isShowRight: false,
       isContainer: true,
@@ -867,17 +868,13 @@ export default {
 
     // 提交表单逻辑
     async submitForm() {
-      try {
-        let test = {
-          container: this.containers
-        }
-        const data = await sendRequest('/CollectInfo/test', 'post', test);
-        // 处理请求成功的数据
-        console.log(data);
-      } catch (error) {
-        // 处理请求失败的错误
-        console.error(error);
+      let requestDta = {
+        container: this.containers,
+        state: this.state,
+        iIFId: this.iIFId
       }
+      let result = await reqSearchInfo(JSON.stringify(requestDta));
+        console.log(result.code);
     },
 
     // 生成容器
