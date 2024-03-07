@@ -7,7 +7,6 @@
     <span class="title">信息收集表单设计</span>
     <el-button class="nav-button" @click="resetForm">重置</el-button>
     <el-button class="nav-button" @click="saveForm">保存</el-button>
-    <el-button class="nav-button" @click="submitForm">提交</el-button>
   </div>
 
   <!-- 左侧半透明盒子 -->
@@ -861,20 +860,20 @@ export default {
       this.containers = [];
     },
 
+
     // 保存表单逻辑
-    saveForm() {
-
-    },
-
-    // 提交表单逻辑
-    async submitForm() {
+    async saveForm() {
       let requestDta = {
         container: this.containers,
         state: this.state,
         iIFId: this.iIFId
       }
       let result = await reqSearchInfo(JSON.stringify(requestDta));
-        console.log(result.code);
+      if (result.code != '0') {
+        ElMessage.warning(result.message);
+      } else {
+        ElMessage.success("保存成功！")
+      }
     },
 
     // 生成容器
