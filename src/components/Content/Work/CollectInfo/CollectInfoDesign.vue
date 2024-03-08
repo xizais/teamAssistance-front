@@ -100,6 +100,34 @@
             </el-col>
           </template>
 
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">元素顶距:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedContainer.marginTop" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">元素底距:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedContainer.marginBottom" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">元素左距:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedContainer.marginLeft" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">元素右距:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input type="number" class="input-right" v-model="selectedContainer.marginRight" placeholder="输入距离(px)"></el-input>
+          </el-col>
+
           <el-button class="reset-button" type="primary" @click="resetMeta('container')">重置</el-button>
         </el-row>
       </template>
@@ -583,7 +611,7 @@
 <script>
 import {ElMessage} from "element-plus";
 import { ref } from 'vue';
-import {reqSearchInfo} from "@/request";
+import {getCollectInfo, reqSearchInfo} from "@/request";
 
 export default {
   name: "CollectInfoDesign",
@@ -605,17 +633,17 @@ export default {
   },
 
   // 页面初始化加载
-  mounted() {
+  async mounted() {
     console.log(this.$route.query.iIFId)
     this.state = this.$route.query.state;
     if (this.state === 'edit') {
-      // 这里请求后端数据，并返回给this.containers
-
-
-
-
-      this.containers = [{"id":0,"width":60,"height":500,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":"4","child":[{"id":1,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"borderRadius":1,"showBorder":true,"borderWidth":1,"showRadius":true,"textType":"none","fontSize":14,"fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"这是一个文本","textAlign":"left","type":"text"},{"id":2,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":"4","fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"}],"type":"container"},{"id":3,"width":60,"height":500,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"child":[{"id":4,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"},{"id":5,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"},{"id":6,"width":200,"height":30,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0,"showBorder":true,"borderWidth":1,"showRadius":true,"borderRadius":1,"fontSize":14,"textColor":"black","fontWeight":400,"fontFamily":"Microsoft YaHei","defaultText":"","textAlign":"left","placeholder":"请输入内容","maxLength":10,"isNeed":false,"type":"input"}],"type":"container"}];
+      let request = {
+        iIFId: this.$route.query.iIFId
+      };
+      let result = await getCollectInfo(request);
+      this.containers = result.data.containers;
     }
+
   },
 
   methods: {
@@ -636,6 +664,10 @@ export default {
           borderWidth: 1,// 边框粗度
           showRadius: true,// 显示圆角
           borderRadius: 1,// 圆角度数
+          marginTop: 20,
+          marginBottom: 20,
+          marginLeft: 20,
+          marginRight: 20,
           type: type,
           child: []
         };
@@ -646,14 +678,15 @@ export default {
       if (type === 'text') {
         const containerId = this.selectedContainer.id;
         const childId = this.selectedChild.id;
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
           width: parseInt(200),
           height: parseInt(30),
-          marginTop: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
+          marginTop: this.containers[containerIndex].marginTop,
+          marginBottom: this.containers[containerIndex].marginBottom,
+          marginLeft: this.containers[containerIndex].marginLeft,
+          marginRight: this.containers[containerIndex].marginRight,
           borderRadius: 1,
           showBorder: false,
           borderWidth: 1,
@@ -666,7 +699,6 @@ export default {
           textAlign: 'left',// 文字位置
           type: type,
         };
-        const containerIndex = this.getTargetIndex(this.containers,containerId);
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
@@ -674,14 +706,15 @@ export default {
       if (type === 'input') {
         const containerId = this.selectedContainer.id;
         const childId = this.selectedChild.id;
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
           width: parseInt(200),
           height: parseInt(30),
-          marginTop: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 10,
+          marginTop: this.containers[containerIndex].marginTop,
+          marginBottom: this.containers[containerIndex].marginBottom,
+          marginLeft: this.containers[containerIndex].marginLeft,
+          marginRight: this.containers[containerIndex].marginRight,
           showBorder: true,
           borderWidth: 1,
           showRadius: true,
@@ -697,7 +730,6 @@ export default {
           isNeed: false,// 是否必填
           type: type,
         };
-        const containerIndex = this.getTargetIndex(this.containers,containerId);
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
@@ -705,14 +737,15 @@ export default {
       if (type === 'select') {
         const containerId = this.selectedContainer.id;
         const childId = this.selectedChild.id;
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
           width: parseInt(100),
           height: parseInt(30),
-          marginTop: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
+          marginTop: this.containers[containerIndex].marginTop,
+          marginBottom: this.containers[containerIndex].marginBottom,
+          marginLeft: this.containers[containerIndex].marginLeft,
+          marginRight: this.containers[containerIndex].marginRight,
           borderRadius: 1,
           showBorder: false,
           borderWidth: 1,
@@ -727,7 +760,6 @@ export default {
           ],
           type: type,
         };
-        const containerIndex = this.getTargetIndex(this.containers,containerId);
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
@@ -735,14 +767,15 @@ export default {
       if (type === 'textarea') {
         const containerId = this.selectedContainer.id;
         const childId = this.selectedChild.id;
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
           width: parseInt(300),
           height: parseInt(100),
-          marginTop: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
+          marginTop: this.containers[containerIndex].marginTop,
+          marginBottom: this.containers[containerIndex].marginBottom,
+          marginLeft: this.containers[containerIndex].marginLeft,
+          marginRight: this.containers[containerIndex].marginRight,
           showBorder: false,
           borderWidth: 1,
           showRadius: true,
@@ -758,7 +791,6 @@ export default {
           isNeed: false,// 是否必填
           type: type,
         };
-        const containerIndex = this.getTargetIndex(this.containers,containerId);
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
@@ -766,14 +798,15 @@ export default {
       if (type === 'radio') {
         const containerId = this.selectedContainer.id;
         const childId = this.selectedChild.id;
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
           width: parseInt(200),
           height: parseInt(30),
-          marginTop: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
+          marginTop: this.containers[containerIndex].marginTop,
+          marginBottom: this.containers[containerIndex].marginBottom,
+          marginLeft: this.containers[containerIndex].marginLeft,
+          marginRight: this.containers[containerIndex].marginRight,
           borderRadius: 1,
           showBorder: false,
           showInnerBorder: true,// 内边框
@@ -789,7 +822,6 @@ export default {
           ],
           type: type,
         };
-        const containerIndex = this.getTargetIndex(this.containers,containerId);
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
@@ -797,14 +829,15 @@ export default {
       if (type === 'checkbox') {
         const containerId = this.selectedContainer.id;
         const childId = this.selectedChild.id;
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
           width: parseInt(200),
           height: parseInt(30),
-          marginTop: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
+          marginTop: this.containers[containerIndex].marginTop,
+          marginBottom: this.containers[containerIndex].marginBottom,
+          marginLeft: this.containers[containerIndex].marginLeft,
+          marginRight: this.containers[containerIndex].marginRight,
           borderRadius: 1,
           showBorder: false,
           showInnerBorder: true,// 内边框
@@ -822,7 +855,6 @@ export default {
           ],
           type: type,
         };
-        const containerIndex = this.getTargetIndex(this.containers,containerId);
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
@@ -830,14 +862,15 @@ export default {
       if (type === 'time') {
         const containerId = this.selectedContainer.id;
         const childId = this.selectedChild.id;
+        const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
           width: parseInt(200),
           height: parseInt(30),
-          marginTop: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
+          marginTop: this.containers[containerIndex].marginTop,
+          marginBottom: this.containers[containerIndex].marginBottom,
+          marginLeft: this.containers[containerIndex].marginLeft,
+          marginRight: this.containers[containerIndex].marginRight,
           borderRadius: 1,
           showBorder: false,
           borderWidth: 1,
@@ -846,7 +879,6 @@ export default {
           isNeed: false,// 是否必填
           type: type,
         };
-        const containerIndex = this.getTargetIndex(this.containers,containerId);
         const childIndex = this.getTargetIndex(this.containers[containerIndex].child,childId);
         this.containers[containerIndex].child[childIndex] = this.selectedChild;
       }
@@ -868,7 +900,7 @@ export default {
         state: this.state,
         iIFId: this.iIFId
       }
-      let result = await reqSearchInfo(JSON.stringify(requestDta));
+      let result = await reqSearchInfo(requestDta);
       if (result.code != '0') {
         ElMessage.warning(result.message);
       } else {
@@ -886,6 +918,10 @@ export default {
         borderWidth: 1,// 边框粗度
         showRadius: true,// 显示圆角
         borderRadius: 1,// 圆角度数
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 20,
+        marginRight: 20,
         child: [],
         type: 'container'
       };
@@ -900,6 +936,7 @@ export default {
       } else if (type === null || type === '' || type === undefined){
         ElMessage.warning('请选择生成元素类型！');
       } else {
+        const containIndex = this.getTargetIndex(this.containers,containId);
 
         let newChild = {};
         // 根据生成元素类型生成相应默认子元素
@@ -908,10 +945,10 @@ export default {
             id: this.generateIndex,
             width: parseInt(200),
             height: parseInt(30),
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
+            marginTop: this.containers[containIndex].marginTop,
+            marginBottom: this.containers[containIndex].marginBottom,
+            marginLeft: this.containers[containIndex].marginLeft,
+            marginRight: this.containers[containIndex].marginRight,
             showBorder: true,
             borderWidth: 1,
             showRadius: true,
@@ -933,10 +970,10 @@ export default {
               id: this.generateIndex,
               width: parseInt(200),
               height: parseInt(30),
-              marginTop: 0,
-              marginBottom: 0,
-              marginLeft: 0,
-              marginRight: 0,
+              marginTop: this.containers[containIndex].marginTop,
+              marginBottom: this.containers[containIndex].marginBottom,
+              marginLeft: this.containers[containIndex].marginLeft,
+              marginRight: this.containers[containIndex].marginRight,
               borderRadius: 1,
               showBorder: false,
               borderWidth: 1,
@@ -955,10 +992,10 @@ export default {
             id: this.generateIndex,
             width: parseInt(100),
             height: parseInt(30),
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
+            marginTop: this.containers[containIndex].marginTop,
+            marginBottom: this.containers[containIndex].marginBottom,
+            marginLeft: this.containers[containIndex].marginLeft,
+            marginRight: this.containers[containIndex].marginRight,
             borderRadius: 1,
             showBorder: false,
             borderWidth: 1,
@@ -979,10 +1016,10 @@ export default {
             id: this.generateIndex,
             width: parseInt(300),
             height: parseInt(100),
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
+            marginTop: this.containers[containIndex].marginTop,
+            marginBottom: this.containers[containIndex].marginBottom,
+            marginLeft: this.containers[containIndex].marginLeft,
+            marginRight: this.containers[containIndex].marginRight,
             showBorder: false,
             borderWidth: 1,
             showRadius: true,
@@ -1004,10 +1041,10 @@ export default {
             id: this.generateIndex,
             width: parseInt(200),
             height: parseInt(30),
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
+            marginTop: this.containers[containIndex].marginTop,
+            marginBottom: this.containers[containIndex].marginBottom,
+            marginLeft: this.containers[containIndex].marginLeft,
+            marginRight: this.containers[containIndex].marginRight,
             borderRadius: 1,
             showBorder: false,
             showInnerBorder: true,// 内边框
@@ -1029,10 +1066,10 @@ export default {
             id: this.generateIndex,
             width: parseInt(200),
             height: parseInt(30),
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
+            marginTop: this.containers[containIndex].marginTop,
+            marginBottom: this.containers[containIndex].marginBottom,
+            marginLeft: this.containers[containIndex].marginLeft,
+            marginRight: this.containers[containIndex].marginRight,
             borderRadius: 1,
             showBorder: false,
             showInnerBorder: true,// 内边框
@@ -1056,10 +1093,10 @@ export default {
             id: this.generateIndex,
             width: parseInt(200),
             height: parseInt(30),
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
+            marginTop: this.containers[containIndex].marginTop,
+            marginBottom: this.containers[containIndex].marginBottom,
+            marginLeft: this.containers[containIndex].marginLeft,
+            marginRight: this.containers[containIndex].marginRight,
             borderRadius: 1,
             showBorder: false,
             borderWidth: 1,
@@ -1071,7 +1108,6 @@ export default {
         }
 
         // 存入子元素
-        const containIndex = this.getTargetIndex(this.containers,containId);
         this.containers[containIndex].child.push(newChild);
         this.generateIndex++;
       }

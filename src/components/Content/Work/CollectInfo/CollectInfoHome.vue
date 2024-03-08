@@ -4,7 +4,7 @@
       <div style="display: flex;">
         <SearchPage/>
         <el-button class="collect-button" @click="goToDesignPage()">信息创建</el-button>
-        <el-button class="collect-button" @click="goToEditPage(123)">信息模板</el-button>
+        <el-button class="collect-button" @click="goToEditPage(4)">信息模板</el-button>
       </div>
       <div class="wrapper">
        <template

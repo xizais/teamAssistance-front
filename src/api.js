@@ -9,6 +9,7 @@ const requests = axios.create({
 
 //请求拦截
 requests.interceptors.request.use((config) => {
+    config.data = JSON.stringify(config.data);
     config.headers['Content-Type'] = 'application/json';
     return config
 })
