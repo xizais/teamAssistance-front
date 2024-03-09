@@ -14,6 +14,7 @@
     <div class="sidebar-left-show" v-if="isShowLeft">
       <el-button type="primary" @click="isShowLeft = false">收回</el-button>
       <div style="display: flex; flex-direction: column;">
+        <el-input class="from-button" v-model="title" placeholder="输入标题"/>
         <el-button class="from-button" @click="addContainer()">生成容器</el-button>
         <el-select class="from-button" v-model="childType" placeholder="请选择">
           <el-option label="文本框" value="text"></el-option>
@@ -59,14 +60,9 @@
           <el-col :span="9" class="text-right">
             <el-text class="align-right">边框:</el-text>
           </el-col>
-          <el-radio-group v-model="selectedContainer.showBorder">
-            <el-col :span="10">
-              <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
-            </el-col>
-            <el-col :span="14">
-              <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
-            </el-col>
-          </el-radio-group>
+          <el-col :span="15">
+            <el-switch v-model="selectedContainer.showBorder" class="right-switch" />
+          </el-col>
 
           <template v-if="selectedContainer.showBorder">
             <el-col :span="9" class="text-right">
@@ -81,14 +77,9 @@
             <el-col :span="9" class="text-right">
               <el-text class="align-right">圆角展示:</el-text>
             </el-col>
-            <el-radio-group v-model="selectedContainer.showRadius">
-              <el-col :span="10">
-                <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
-              </el-col>
-              <el-col :span="14">
-                <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
-              </el-col>
-            </el-radio-group>
+            <el-col :span="15">
+              <el-switch v-model="selectedContainer.showRadius" class="right-switch" />
+            </el-col>
           </template>
 
           <template v-if="selectedContainer.showBorder&&selectedContainer.showRadius">
@@ -211,20 +202,22 @@
           <el-col :span="9" class="text-right">
             <el-text class="align-right">是否必填:</el-text>
           </el-col>
-          <el-radio-group v-model="selectedChild.isNeed">
-            <el-col :span="10">
-              <el-radio :label="true" style="font-weight: bold;">是</el-radio>
-            </el-col>
-            <el-col :span="14">
-              <el-radio :label="false" style="font-weight: bold;">否</el-radio>
-            </el-col>
-          </el-radio-group>
+          <el-col :span="15">
+            <el-switch v-model="selectedChild.isNeed" class="right-switch" />
+          </el-col>
         </el-row>
       </template>
 
       <!--text组件配置-->
       <template v-if="!isContainer&&selectedChild.type==='text'">
         <el-row>
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">默认文本:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.defaultText" placeholder="输入文本"></el-input>
+          </el-col>
+
           <el-col :span="9" class="text-right">
             <el-text class="align-right">文本位置:</el-text>
           </el-col>
@@ -302,14 +295,9 @@
             <el-col :span="9" class="text-right">
               <el-text class="align-right">内边框:</el-text>
             </el-col>
-            <el-radio-group v-model="selectedChild.showInnerBorder">
-              <el-col :span="10">
-                <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
-              </el-col>
-              <el-col :span="14">
-                <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
-              </el-col>
-            </el-radio-group>
+            <el-col :span="15">
+              <el-switch v-model="selectedChild.showInnerBorder" class="right-switch" />
+            </el-col>
           </template>
 
           <template v-if="selectedChild.type==='checkbox'">
@@ -331,14 +319,9 @@
           <el-col :span="9" class="text-right">
             <el-text class="align-right">是否必填:</el-text>
           </el-col>
-          <el-radio-group v-model="selectedChild.isNeed">
-            <el-col :span="10">
-              <el-radio :label="true" style="font-weight: bold;">是</el-radio>
-            </el-col>
-            <el-col :span="14">
-              <el-radio :label="false" style="font-weight: bold;">否</el-radio>
-            </el-col>
-          </el-radio-group>
+          <el-col :span="15">
+            <el-switch v-model="selectedChild.isNeed" class="right-switch" />
+          </el-col>
         </el-row>
       </template>
 
@@ -402,14 +385,9 @@
           <el-col :span="9" class="text-right">
             <el-text class="align-right">边框:</el-text>
           </el-col>
-          <el-radio-group v-model="selectedChild.showBorder">
-            <el-col :span="10">
-              <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
-            </el-col>
-            <el-col :span="14">
-              <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
-            </el-col>
-          </el-radio-group>
+          <el-col :span="15">
+            <el-switch v-model="selectedChild.showBorder" class="right-switch" />
+          </el-col>
 
           <template v-if="selectedChild.showBorder">
             <el-col :span="9" class="text-right">
@@ -424,14 +402,9 @@
             <el-col :span="9" class="text-right">
               <el-text class="align-right">圆角展示:</el-text>
             </el-col>
-            <el-radio-group v-model="selectedChild.showRadius">
-              <el-col :span="10">
-                <el-radio :label="true" style="font-weight: bold;">显示</el-radio>
-              </el-col>
-              <el-col :span="14">
-                <el-radio :label="false" style="font-weight: bold;">隐藏</el-radio>
-              </el-col>
-            </el-radio-group>
+            <el-col :span="15">
+              <el-switch v-model="selectedChild.showRadius" class="right-switch" />
+            </el-col>
           </template>
 
           <template v-if="selectedChild.showBorder&&selectedChild.showRadius">
@@ -622,6 +595,7 @@ export default {
       isShowLeft: true,
       isShowRight: false,
       isContainer: true,
+      title: '',
 
       generateIndex: 0,
       childType: '',// 生成元素的类型（下拉选择）
@@ -634,16 +608,17 @@ export default {
 
   // 页面初始化加载
   async mounted() {
-    console.log(this.$route.query.iIFId)
     this.state = this.$route.query.state;
     if (this.state === 'edit') {
+      this.iIFId = this.$route.query.iIFId;
       let request = {
-        iIFId: this.$route.query.iIFId
+        iIFId: this.iIFId
       };
       let result = await getCollectInfo(request);
       this.containers = result.data.containers;
+      this.title = result.data.infoForm.ciftitle;
+      this.generateIndex = result.data.maxMetaId + 1;
     }
-
   },
 
   methods: {
@@ -664,10 +639,10 @@ export default {
           borderWidth: 1,// 边框粗度
           showRadius: true,// 显示圆角
           borderRadius: 1,// 圆角度数
-          marginTop: 20,
-          marginBottom: 20,
-          marginLeft: 20,
-          marginRight: 20,
+          marginTop: 10,
+          marginBottom: 10,
+          marginLeft: 10,
+          marginRight: 10,
           type: type,
           child: []
         };
@@ -681,7 +656,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
-          width: parseInt(200),
+          width: parseInt(100),
           height: parseInt(30),
           marginTop: this.containers[containerIndex].marginTop,
           marginBottom: this.containers[containerIndex].marginBottom,
@@ -715,7 +690,7 @@ export default {
           marginBottom: this.containers[containerIndex].marginBottom,
           marginLeft: this.containers[containerIndex].marginLeft,
           marginRight: this.containers[containerIndex].marginRight,
-          showBorder: true,
+          showBorder: false,
           borderWidth: 1,
           showRadius: true,
           borderRadius: 1,
@@ -898,13 +873,17 @@ export default {
       let requestDta = {
         container: this.containers,
         state: this.state,
-        iIFId: this.iIFId
+        iIFId: this.iIFId,
+        title: this.title
       }
       let result = await reqSearchInfo(requestDta);
       if (result.code != '0') {
         ElMessage.warning(result.message);
       } else {
         ElMessage.success("保存成功！")
+        setTimeout(() => {
+          this.goBack();
+        }, 1500);
       }
     },
 
@@ -918,10 +897,10 @@ export default {
         borderWidth: 1,// 边框粗度
         showRadius: true,// 显示圆角
         borderRadius: 1,// 圆角度数
-        marginTop: 20,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20,
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 10,
+        marginRight: 10,
         child: [],
         type: 'container'
       };
@@ -949,7 +928,7 @@ export default {
             marginBottom: this.containers[containIndex].marginBottom,
             marginLeft: this.containers[containIndex].marginLeft,
             marginRight: this.containers[containIndex].marginRight,
-            showBorder: true,
+            showBorder: false,
             borderWidth: 1,
             showRadius: true,
             borderRadius: 1,
@@ -968,7 +947,7 @@ export default {
         if (type === 'text') {
           newChild = {
               id: this.generateIndex,
-              width: parseInt(200),
+              width: parseInt(100),
               height: parseInt(30),
               marginTop: this.containers[containIndex].marginTop,
               marginBottom: this.containers[containIndex].marginBottom,
@@ -1295,5 +1274,9 @@ export default {
 .hoverable:hover {
   background-color: lightyellow;
   border-radius: 10px;
+}
+
+.right-switch {
+  margin-right: 80px
 }
 </style>

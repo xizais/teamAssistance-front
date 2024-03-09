@@ -7,6 +7,7 @@ import MessageHome from "@/components/Content/Message/MessageHome";
 // 工作
 import CollectInfoHome from "@/components/Content/Work/CollectInfo/CollectInfoHome";
 import CollectInfoDesign from "@/components/Content/Work/CollectInfo/CollectInfoDesign";
+import CollectInfoShow from "@/components/Content/Work/CollectInfo/CollectInfoShow";
 // 组织
 import OrgHome from "@/components/Content/Organization/OrgHome";
 
@@ -23,6 +24,7 @@ const routes = [
         ]
     },
     { path: '/collectInfoDesign', component: CollectInfoDesign },
+    { path: '/CollectInfoShow', component: CollectInfoShow },
 
 ];
 

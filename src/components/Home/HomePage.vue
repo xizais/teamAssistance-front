@@ -120,12 +120,8 @@ export default {
 <style scoped>
 .navbar {
   display: flex;
-  /*align-items: center;*/
-  /*justify-content: spa  ce-between;*/
   background-color: #f5f7fa;
   padding: 16px;
-  /*width: 150px;*/
-
 }
 
 .menu {
