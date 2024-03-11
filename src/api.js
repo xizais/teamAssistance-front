@@ -3,8 +3,8 @@ import axios from 'axios'
 
 const requests = axios.create({
     baseURL: 'http://localhost:8099/api',
-    // baseURL: "/api",
-    timeout: 5000
+    timeout: 5000,
+    withCredentials: true // 允许跨域请求带上cookie
 })
 
 //请求拦截
