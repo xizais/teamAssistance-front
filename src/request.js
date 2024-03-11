@@ -10,4 +10,6 @@ export const reqSearchInfo = (data) => requests({ url: '/CollectInfo/saveCollect
 
 export const getCollectInfo = (data) => requests({ url: '/CollectInfo/getCollectInfo',method: 'post', data });// 保存表单配置与元素数据
 
+export const deleteCollectInfo = (data) => requests({ url: '/CollectInfo/deleteCollectInfo',method: 'post', data });// 删除表单配置与元素数据
+
 

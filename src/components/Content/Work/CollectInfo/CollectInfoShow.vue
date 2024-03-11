@@ -5,24 +5,15 @@
       <el-icon><ArrowLeftBold /></el-icon>
     </el-button>
     <span class="title">{{ title }}</span>
-    <template v-if="this.authority">
-      <el-dropdown split-button type="primary">
-        操作
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="editPage(iIFId)">修改页面</el-dropdown-item>
-            <el-dropdown-item @click="editConfig(iIFId)">修改配置</el-dropdown-item>
-            <el-dropdown-item @click="publishForm(iIFId)">发布表单</el-dropdown-item>
-            <el-dropdown-item @click="saveTemplate(iIFId)">保存模板</el-dropdown-item>
-            <el-dropdown-item @click="closePublish(iIFId)">关闭发布</el-dropdown-item>
-            <el-dropdown-item @click="deleteForm(iIFId)">删除表单</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </template>
-    <template v-else>
-      <div style="width: 60px"></div>
-    </template>
+    <el-dropdown split-button >
+      操作
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item @click="saveData()">暂存</el-dropdown-item>
+          <el-dropdown-item @click="submit()">提交</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
   </div>
   <div class="content">
     <!-- 内容 -->
@@ -173,11 +164,35 @@
       </div>
     </div>
   </div>
+  <template v-if="this.authority">
+    <div class="config">
+      <div class="config-title">
+        表单配置信息
+      </div>
+      <div class="config-content">
+        是否开始发布
+        发布起始时间
+        发布者身份
+        发布对象
+        发布组织
+      </div>
+    </div>
+  </template>
+  <template v-if="this.authority">
+    <div class="config">
+      <div class="config-title">
+        表单数据信息
+      </div>
+      <div class="config-content">
+        数据分类：按组织分类、不分类
+        数据显示：分页，表格展示
+      </div>
+    </div>
+  </template>
 </template>
 
 <script>
 import {getCollectInfo} from "@/request";
-import {ElMessage} from "element-plus";
 
 export default {
   name: "CollectInfoShow",
@@ -218,78 +233,7 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    editPage(iIFId) {
-      // 在这里处理"修改页面"选项的事件
-      if (this.infoForm.cifstate === '发布') {
-        ElMessage.warning("发布中不允许修改！");
-        return;
-      }
-      if (this.infoForm.cifstate === '停止') {
-        ElMessage.warning("已停止，不允许修改！");
-        return;
-      }
-      this.$router.push({ path: "/collectInfoDesign", query: { state: 'edit',iIFId: iIFId } });
-    },
-    editConfig(iIFId) {
-      // 在这里处理"修改配置"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置！");
-        return;
-      }
 
-      console.log(iIFId)
-
-    },
-    publishForm(iIFId) {
-      // 在这里处理"发布表单"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置,不允许发布！");
-        return;
-      }
-      if (this.infoForm.cifstate === '发布') {
-        ElMessage.warning("不允许重复发布！");
-        return;
-      }
-
-      console.log(iIFId)
-
-
-    },
-    saveTemplate(iIFId) {
-      // 保存表单模板
-      ElMessage.info("saveTemplate");
-      console.log(iIFId)
-    },
-    closePublish(iIFId) {
-      // 在这里处理"关闭发布"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置,不允许停止！");
-        return;
-      }
-      if (this.infoForm.cifstate === '停止') {
-        ElMessage.warning("不允许重复停止！");
-        return;
-      }
-
-      console.log(iIFId)
-
-    },
-    deleteForm(iIFId) {
-      // 在这里处理"删除表单"选项的事件
-      if (this.infoForm.cIFState === '发布') {
-        ElMessage.warning("发布中，不允许删除！");
-        return;
-      }
-      const confirmed = confirm('确认删除吗？');
-      if (confirmed) {
-        ElMessage.warning("发布中，不允许删除！");
-
-
-        console.log(iIFId)
-
-
-      }
-    },
   },
 }
 </script>
@@ -336,5 +280,35 @@ export default {
   margin: 0;
   padding: 0;
   float: left;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* 可根据需要调整容器高度 */
+}
+
+.config {
+  /*text-align: center;*/
+}
+
+.config-title {
+  margin-top: 10px;
+  padding: 10px;
+  padding-left: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #edffc7;
+  border-radius: 6px;
+}
+
+.config-content {
+  font-size: 14px;
+  background-color: #f9fdf1;
+  border-radius: 6px;
+  /*margin-left: 20%;*/
+  /*width: 60%;*/
+  height: 400px;
 }
 </style>

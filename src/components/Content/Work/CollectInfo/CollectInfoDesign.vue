@@ -41,6 +41,21 @@
       <el-button v-if="isContainer" type="primary" @click="isContainer = false" style="margin-bottom: 10px">切换元素</el-button>
       <el-button v-if="!isContainer" type="primary" @click="isContainer = true" style="margin-bottom: 10px">切换容器</el-button>
       <el-button type="primary" @click="isShowRight = false" style="margin-bottom: 10px">收回</el-button>
+      <template v-if="!isContainer&&(
+          selectedChild.type!=='text'
+          && selectedChild.type!=='select'
+          && selectedChild.type!=='radio'
+          && selectedChild.type!=='checkbox')">
+        <el-row>
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">数据名称:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.title" placeholder="输入名称"></el-input>
+          </el-col>
+        </el-row>
+      </template>
+
       <template v-if="isContainer&&selectedContainer.type==='container'">
         <el-row>
           <el-col :span="9" class="text-right">
@@ -276,6 +291,13 @@
       <template v-if="!isContainer&&(selectedChild.type==='select' || selectedChild.type==='radio' || selectedChild.type==='checkbox')">
         <el-button type="primary" @click="addOption(selectedContainer.id,selectedChild.id)" style="margin-bottom: 10px">增加选项</el-button>
         <el-row>
+          <el-col :span="9" class="text-right">
+            <el-text class="align-right">数据名称:</el-text>
+          </el-col>
+          <el-col :span="15">
+            <el-input class="input-right" v-model="selectedChild.title" placeholder="输入名称"></el-input>
+          </el-col>
+
          <template
           v-for="(option,optionIndex) in selectedChild.options"
           :key="option.id"
@@ -656,6 +678,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
+          title: '',
           width: parseInt(100),
           height: parseInt(30),
           marginTop: this.containers[containerIndex].marginTop,
@@ -684,6 +707,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
+          title: '',
           width: parseInt(200),
           height: parseInt(30),
           marginTop: this.containers[containerIndex].marginTop,
@@ -715,6 +739,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
+          title: '',
           width: parseInt(100),
           height: parseInt(30),
           marginTop: this.containers[containerIndex].marginTop,
@@ -745,6 +770,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
+          title: '',
           width: parseInt(300),
           height: parseInt(100),
           marginTop: this.containers[containerIndex].marginTop,
@@ -776,6 +802,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
+          title: '',
           width: parseInt(200),
           height: parseInt(30),
           marginTop: this.containers[containerIndex].marginTop,
@@ -807,6 +834,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
+          title: '',
           width: parseInt(200),
           height: parseInt(30),
           marginTop: this.containers[containerIndex].marginTop,
@@ -840,6 +868,7 @@ export default {
         const containerIndex = this.getTargetIndex(this.containers,containerId);
         this.selectedChild = {
           id: childId,
+          title: '',
           width: parseInt(200),
           height: parseInt(30),
           marginTop: this.containers[containerIndex].marginTop,
@@ -922,6 +951,7 @@ export default {
         if (type === 'input') {
           newChild = {
             id: this.generateIndex,
+            title: '',
             width: parseInt(200),
             height: parseInt(30),
             marginTop: this.containers[containIndex].marginTop,
@@ -947,6 +977,7 @@ export default {
         if (type === 'text') {
           newChild = {
               id: this.generateIndex,
+              title: '',
               width: parseInt(100),
               height: parseInt(30),
               marginTop: this.containers[containIndex].marginTop,
@@ -969,6 +1000,7 @@ export default {
         if (type === 'select') {
           newChild = {
             id: this.generateIndex,
+            title: '',
             width: parseInt(100),
             height: parseInt(30),
             marginTop: this.containers[containIndex].marginTop,
@@ -993,6 +1025,7 @@ export default {
         if (type === 'textarea') {
           newChild = {
             id: this.generateIndex,
+            title: '',
             width: parseInt(300),
             height: parseInt(100),
             marginTop: this.containers[containIndex].marginTop,
@@ -1018,6 +1051,7 @@ export default {
         if (type === 'radio') {
           newChild = {
             id: this.generateIndex,
+            title: '',
             width: parseInt(200),
             height: parseInt(30),
             marginTop: this.containers[containIndex].marginTop,
@@ -1043,6 +1077,7 @@ export default {
         if (type === 'checkbox') {
           newChild = {
             id: this.generateIndex,
+            title: '',
             width: parseInt(200),
             height: parseInt(30),
             marginTop: this.containers[containIndex].marginTop,
@@ -1070,6 +1105,7 @@ export default {
         if (type === 'time') {
           newChild = {
             id: this.generateIndex,
+            title: '',
             width: parseInt(200),
             height: parseInt(30),
             marginTop: this.containers[containIndex].marginTop,
