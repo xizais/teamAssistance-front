@@ -3,6 +3,7 @@ import requests from "../src/api"
 export const reqCategoryList = () => {
     return requests({ method: 'post', url: '/CollectInfo/saveCollectDesign' });
 }
+export const userLogin = (data) => requests({ url: '/user/login',method: 'post', data });// 获取表单配置信息列表
 
 export const getCollectInfoList = (data) => requests({ url: '/CollectInfo/getCollectInfoList',method: 'post', data });// 获取表单配置信息列表
 
