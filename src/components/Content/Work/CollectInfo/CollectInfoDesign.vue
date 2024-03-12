@@ -630,15 +630,15 @@ export default {
   },
 
   // 页面初始化加载
-  mounted() {
+  async mounted() {
     this.state = this.$route.query.state;
     if (this.state === 'edit') {
       this.iIFId = this.$route.query.iIFId;
       let request = {
         iIFId: this.iIFId
       };
-      let result = getCollectInfo(request);
-      this.containers = result.data.containers;
+      let result = await getCollectInfo(request);
+      this.containers = result.data?.containers;
       this.title = result.data.infoForm.ciftitle;
       this.generateIndex = result.data.maxMetaId + 1;
     }
@@ -899,14 +899,14 @@ export default {
 
 
     // 保存表单逻辑
-    saveForm() {
+    async saveForm() {
       let requestDta = {
         container: this.containers,
         state: this.state,
         iIFId: this.iIFId,
         title: this.title
       }
-      let result = reqSearchInfo(requestDta);
+      let result = await reqSearchInfo(requestDta);
       if (result.code != '0') {
         ElMessage.warning(result.message);
       } else {

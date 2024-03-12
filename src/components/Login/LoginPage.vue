@@ -25,7 +25,6 @@ export default {
       };
       let result =  await userLogin(requestData);
       if (result.code === 0) {
-        localStorage.setItem('token', result.token);
         // 登录成功后跳转到首页
         this.$router.push('/home');
       } else {

@@ -103,8 +103,10 @@ export default {
   },
 
   methods: {
-    searchInfo(value){
-      console.log(value)
+    async searchInfo(searchData){
+      let result = await getCollectInfoList(searchData);
+      this.dataArray = result.data?.infoList;
+      this.selectPage.total = this.dataArray?.length;
     },
     async initCollectData() {
       let requestData = {

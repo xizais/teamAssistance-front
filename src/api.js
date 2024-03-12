@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 const requests = axios.create({
-    baseURL: 'http://localhost:8099/api',
+    // baseURL: '',
     timeout: 5000,
     withCredentials: true // 允许跨域请求带上cookie
 })
@@ -16,7 +16,7 @@ requests.interceptors.request.use((config) => {
         config.headers['Authorization'] = `Bearer ${token}`;
     }
     config.data = JSON.stringify(config.data);
-    // config.headers['Content-Type'] = 'application/json';
+    config.headers['Content-Type'] = 'application/json';
 
     return config
 })
