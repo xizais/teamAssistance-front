@@ -42,7 +42,8 @@
       <el-button v-if="!isContainer" type="primary" @click="isContainer = true" style="margin-bottom: 10px">切换容器</el-button>
       <el-button type="primary" @click="isShowRight = false" style="margin-bottom: 10px">收回</el-button>
       <template v-if="!isContainer&&(
-          selectedChild.type!=='text'
+          selectedChild.type!==undefined
+          && selectedChild.type!=='text'
           && selectedChild.type!=='select'
           && selectedChild.type!=='radio'
           && selectedChild.type!=='checkbox')">
@@ -629,14 +630,14 @@ export default {
   },
 
   // 页面初始化加载
-  async mounted() {
+  mounted() {
     this.state = this.$route.query.state;
     if (this.state === 'edit') {
       this.iIFId = this.$route.query.iIFId;
       let request = {
         iIFId: this.iIFId
       };
-      let result = await getCollectInfo(request);
+      let result = getCollectInfo(request);
       this.containers = result.data.containers;
       this.title = result.data.infoForm.ciftitle;
       this.generateIndex = result.data.maxMetaId + 1;
@@ -898,14 +899,14 @@ export default {
 
 
     // 保存表单逻辑
-    async saveForm() {
+    saveForm() {
       let requestDta = {
         container: this.containers,
         state: this.state,
         iIFId: this.iIFId,
         title: this.title
       }
-      let result = await reqSearchInfo(requestDta);
+      let result = reqSearchInfo(requestDta);
       if (result.code != '0') {
         ElMessage.warning(result.message);
       } else {

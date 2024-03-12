@@ -9,8 +9,15 @@ const requests = axios.create({
 
 //请求拦截
 requests.interceptors.request.use((config) => {
+    // 从本地存储中获取 Token
+    const token = localStorage.getItem('token');
+    if (token) {
+        // 如果存在 Token，则将 Token 添加到请求头部中
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
     config.data = JSON.stringify(config.data);
-    config.headers['Content-Type'] = 'application/json';
+    // config.headers['Content-Type'] = 'application/json';
+
     return config
 })
 

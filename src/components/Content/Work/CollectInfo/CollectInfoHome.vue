@@ -57,7 +57,7 @@
        </template>
       </div>
 
-      <template v-if="this.dataArray.length !== 0">
+      <template v-if="this.dataArray?.length !== 0">
         <div class="container-selectPage">
           <div class="demo-pagination-block">
             <el-pagination
@@ -111,8 +111,8 @@ export default {
         selectPage: this.selectPage
       };
       let result = await getCollectInfoList(requestData);
-      this.dataArray = result.data.infoList;
-      this.selectPage.total = this.dataArray.length;
+      this.dataArray = result.data?.infoList;
+      this.selectPage.total = this.dataArray?.length;
     },
     goToDesignPage() {
       this.$router.push({ path: "/collectInfoDesign", query: { state: 'add' } });
