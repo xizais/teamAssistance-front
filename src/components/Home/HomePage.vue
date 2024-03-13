@@ -125,12 +125,14 @@ export default {
 }
 
 .menu {
-  width: 150px;
+  width: 13%;
   min-height: 100vh;
+  border-radius: 6px;
 }
 
 .container-right {
   display: flex;
   flex-grow: 1;
+  padding: 1%;
 }
 </style>

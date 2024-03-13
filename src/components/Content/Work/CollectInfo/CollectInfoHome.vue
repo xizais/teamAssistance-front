@@ -8,26 +8,52 @@
       </div>
       <div class="wrapper">
        <template
-          v-for="(data) in dataArray"
+          v-for="(data,index) in dataArray"
           :key="data.iIFId"
        >
+         <template v-if="index===0">
+           <div class="container" style="font-weight: bolder; font-size: 18px">
+             <div class="left">
+               <div class="left-title">
+                 <span class="left-fontStyle">标题</span>
+               </div>
+               <div class="left-time">
+                 <span class="left-fontStyle">创建时间|发布时间</span>
+               </div>
+               <div class="left-creator">
+                 <span class="left-fontStyle">创建者|发布者</span>
+               </div>
+               <div class="left-creator">
+                 <span class="left-fontStyle">状态</span>
+               </div>
+             </div>
+             <div class="right">
+               <div class="left-creator" style="text-align: right;padding-right: 10%">
+                 <span class="left-fontStyle">操作</span>
+               </div>
+             </div>
+           </div>
+         </template>
          <div class="container">
            <div class="left">
              <div class="left-title">
-               <span class="left-fontStyle">标题：{{ data.cIFTitle }}</span>
+               <span class="left-fontStyle">{{ data.cIFTitle }}</span>
              </div>
              <template v-if="data.cIFState === '发布'">
                <div class="left-time">
-                 <span class="left-fontStyle">发布时间：{{ data.standerPubTime }}</span>
+                 <span class="left-fontStyle">{{ data.standerPubTime }}</span>
                </div>
              </template>
              <template v-else>
                <div class="left-time">
-                 <span class="left-fontStyle">创建时间：{{ data.standerCreateTime }}</span>
+                 <span class="left-fontStyle">{{ data.standerCreateTime }}</span>
                </div>
              </template>
              <div class="left-creator">
-               <span class="left-fontStyle">创建者：{{ data.cIFPuber }}</span>
+               <span class="left-fontStyle">{{ data.cIFPuber }}</span>
+             </div>
+             <div class="left-creator">
+               <span class="left-fontStyle">{{ data.cIFState }}</span>
              </div>
            </div>
            <div class="right">
@@ -310,5 +336,9 @@ export default {
 .left-fontStyle {
   font-size: 16px;
   font-family: 'Kaiti'
+}
+
+.wrapper {
+  text-align: center;
 }
 </style>
