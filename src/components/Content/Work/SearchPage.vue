@@ -39,11 +39,11 @@ export default {
           lable: 2
         },
         {
-          value: '未完成填写',
+          value: '未完成',
           lable: 3
         },
         {
-          value: '已完成填写',
+          value: '已完成',
           lable: 4
         }
       ]

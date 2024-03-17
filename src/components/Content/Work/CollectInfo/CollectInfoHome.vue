@@ -67,12 +67,11 @@
                <template #dropdown>
                  <el-dropdown-menu>
                    <el-dropdown-item @click="goToShow(data.iIFId)">查看表单</el-dropdown-item>
-                   <el-dropdown-item @click="(data.iIFId)" v-if="data.authority">查看配置</el-dropdown-item>
-                   <el-dropdown-item @click="(data.iIFId)" v-if="data.authority && (data.cIFState === '发布' || data.cIFState === '停止')">查看数据</el-dropdown-item>
-                   <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">发布任务</el-dropdown-item>
+                   <el-dropdown-item @click="managerConfigShow(data.iIFId)" v-if="data.authority">发布配置</el-dropdown-item>
+                   <el-dropdown-item @click="goToDataShow(data.iIFId)" v-if="data.authority && (data.cIFState === '发布' || data.cIFState === '停止')">查看数据</el-dropdown-item>
+                   <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">发布表单</el-dropdown-item>
                    <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState === '发布'">结束任务</el-dropdown-item>
-                   <el-dropdown-item @click="goToEditPage(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">表单处理</el-dropdown-item>
-                   <el-dropdown-item @click="publishForm(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">配置处理</el-dropdown-item>
+                   <el-dropdown-item @click="goToEditPage(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">编辑表单</el-dropdown-item>
                    <el-dropdown-item @click="deleteForm(data)" v-if="data.authority && data.cIFState !== '发布'">删除表单</el-dropdown-item>
                  </el-dropdown-menu>
                </template>
@@ -150,6 +149,9 @@ export default {
     },
     goToShow(iIFId) {
       this.$router.push({ path: "/CollectInfoShow", query: { state: 'show',iIFId: iIFId } });
+    },
+    managerConfigShow(iIFId) {
+      this.$router.push({ path: "/PubConfig", query: { iTypeId: iIFId, cType: 'CollectInfo' } });
     },
     editPage(iIFId) {
       // 在这里处理"修改页面"选项的事件

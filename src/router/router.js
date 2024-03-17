@@ -10,6 +10,8 @@ import CollectInfoDesign from "@/components/Content/Work/CollectInfo/CollectInfo
 import CollectInfoShow from "@/components/Content/Work/CollectInfo/CollectInfoShow";
 // 组织
 import OrgHome from "@/components/Content/Organization/OrgHome";
+// 发布配置
+import PubConfig from "@/components/Content/Work/PubConfig";
 
 const routes = [
     { path: '/', component: LoginPage },
@@ -25,6 +27,7 @@ const routes = [
     },
     { path: '/collectInfoDesign', component: CollectInfoDesign },
     { path: '/CollectInfoShow', component: CollectInfoShow },
+    { path: '/PubConfig', component: PubConfig },
 
 ];
 
