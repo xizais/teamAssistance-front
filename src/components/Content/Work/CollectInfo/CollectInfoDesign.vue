@@ -607,7 +607,7 @@
 <script>
 import {ElMessage} from "element-plus";
 import { ref } from 'vue';
-import {getCollectInfo, reqSearchInfo} from "@/request";
+import {getCollectInfo, saveCollect} from "@/request";
 
 export default {
   name: "CollectInfoDesign",
@@ -906,7 +906,7 @@ export default {
         iIFId: this.iIFId,
         title: this.title
       }
-      let result = await reqSearchInfo(requestDta);
+      let result = await saveCollect(requestDta);
       if (result.code != '0') {
         ElMessage.warning(result.message);
       } else {

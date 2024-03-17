@@ -9,7 +9,7 @@
                   router: 使用 vue-router 的模式
                   -->
     <el-menu
-        :default-active="dataList[1]?.child[4]?.id"
+        :default-active="typeContent"
         class="menu"
         background-color="#545c64"
         text-color="#fff"
@@ -72,12 +72,12 @@ export default {
             {
               id:'2-3',
               name:'任务发布',
-              path:'/collectInfo'
+              path:'/taskHome'
             },
             {
               id:'2-4',
               name:'通知发布',
-              path:'/collectInfo'
+              path:'/noticeHome'
             },
             {
               id:'2-5',
@@ -100,7 +100,8 @@ export default {
               path: '/collectInfo'
             }
           ]},
-      ]
+      ],
+      
     };
   },
   methods:{
@@ -112,9 +113,26 @@ export default {
     open(val){
       this.$router.push(val);
     }
-  }
-
-};
+  },
+  computed:{
+    //第一次进入页面选中
+    typeContent() {
+      const path = window.location.pathname;
+      let foundChild = null;
+      if(path == ''){
+        return this.dataList[1]?.child[4]?.id
+      }else{
+        const type = this.dataList.find(item => {
+        foundChild = item.child.find(i => i.path === path);
+        return foundChild;
+        });
+        console.log('type', type);
+        console.log('foundChild', foundChild);
+      }
+      return foundChild.id;
+    }
+}
+}
 </script>
 
 <style scoped>

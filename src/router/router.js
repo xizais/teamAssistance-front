@@ -17,18 +17,41 @@ const routes = [
     { path: '/', component: LoginPage },
     {
         path: '/home',
-        component: HomePage ,
-        redirect:'/collectInfoHome',// 默认定向路径
-        children:[
+        component: HomePage,
+        redirect: '/collectInfoHome', // 默认定向路径
+        children: [
             { path: '/messageHome', component: MessageHome },
             { path: '/collectInfoHome', component: CollectInfoHome },
             { path: '/OrgHome', component: OrgHome },
+            // 通知发布
+            {
+                path: '/noticeHome',
+                component: () =>
+                    import ('@/components/Content/Work/Notice/MessageHome')
+            },
+            // 任务发布
+            {
+                path: '/taskHome',
+                component: () =>
+                    import ('@/components/Content/Work/Task/TaskHome')
+            },
         ]
     },
     { path: '/collectInfoDesign', component: CollectInfoDesign },
     { path: '/CollectInfoShow', component: CollectInfoShow },
     { path: '/PubConfig', component: PubConfig },
-
+    // 通知创建
+    {
+        path: '/noticeInfoDesign',
+        component: () =>
+            import ('@/components/Content/Work/Notice/MessageInfoDesign')
+    },
+    // 任务创建
+    {
+        path: '/taskInfoDesign',
+        component: () =>
+            import ('@/components/Content/Work/Task/TaskInfoDesign')
+    },
 ];
 
 const router = createRouter({

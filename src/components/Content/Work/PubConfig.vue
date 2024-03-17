@@ -127,7 +127,7 @@
     </el-form>
     <div align="center">
       <el-button type="primary" @click="clostConfig()">关闭</el-button>
-      <el-button type="primary" @click="editConfig()" v-if="isReadOnly">修改</el-button>
+      <el-button type="primary" @click="editConfig()" v-if="isReadOnly&&!isPub">修改</el-button>
       <el-button type="primary" @click="saveConfig()" v-if="!isReadOnly">保存</el-button>
     </div>
   </div>
@@ -267,6 +267,7 @@ export default {
         publisherName: '',
       },
       disableInput: true, // 设置输入框是否禁用
+      isPub: false,//是否发布
 
       filterKeyword: '',
       filterKeywordOrg: '',
@@ -306,11 +307,12 @@ export default {
         this.form.orgEnabled = pubConfig.cIsOrgManger;
         this.form.publisherName = pubConfig.cPuber;
         this.selectedPersons = (pubConfig.cPubToPerson==null||pubConfig.cPubToPerson=='')?[]:pubConfig.cPubToPerson;
-        this.selectedOrg = (pubConfig.selectedOrg==null||pubConfig.selectedOrg=='')?[]:pubConfig.selectedOrg;
-        this.selectedFlag = (pubConfig.selectedFlag==null||pubConfig.selectedFlag=='')?[]:pubConfig.selectedFlag;
-        this.selectedPersonsCode = (pubConfig.selectedPersonsCode==null||pubConfig.selectedPersonsCode=='')?[]:pubConfig.selectedPersonsCode;
-        this.selectedOrgCode = (pubConfig.selectedOrgCode==null||pubConfig.selectedOrgCode=='')?[]:pubConfig.selectedOrgCode;
-        this.selectedFlagCode = (pubConfig.selectedFlagCode==null||pubConfig.selectedFlagCode=='')?[]:pubConfig.selectedFlagCode;
+        this.selectedOrg = (pubConfig.cPubToOrg==null||pubConfig.cPubToOrg=='')?[]:pubConfig.cPubToOrg;
+        this.selectedFlag = (pubConfig.cPubToFlag==null||pubConfig.cPubToFlag=='')?[]:pubConfig.cPubToFlag;
+        this.selectedPersonsCode = (pubConfig.cPubToPersonCode==null||pubConfig.cPubToPersonCode=='')?[]:pubConfig.cPubToPersonCode;
+        this.selectedOrgCode = (pubConfig.cPubToOrgCode==null||pubConfig.cPubToOrgCode=='')?[]:pubConfig.cPubToOrgCode;
+        this.selectedFlagCode = (pubConfig.cPubToFlagCode==null||pubConfig.cPubToFlagCode=='')?[]:pubConfig.cPubToFlagCode;
+        this.isPub = pubConfig.infoState == '发布';
       }
     },
     clostConfig(){
