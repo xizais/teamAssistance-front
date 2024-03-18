@@ -64,7 +64,7 @@ export default {
       this.$emit('searchInfo',requestData)
     },
     formatDate(date) {
-      if (date === null) {
+      if (date == null) {
         return null;
       }
       const year = date.getFullYear();

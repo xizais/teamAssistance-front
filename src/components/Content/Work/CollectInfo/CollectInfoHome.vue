@@ -85,6 +85,7 @@
                 small="small"
                 layout="total, prev, pager, next, jumper"
                 :total="selectPage.total"
+                @current-change="handleCurrentChange"
             />
           </div>
       </div>
@@ -108,6 +109,10 @@ export default {
         currentPage: 1,
         pageSize: 10,
         total: 0,
+        offset: 0,
+      },
+      searchData: {
+        'searchInfo': {}
       },
       dataArray: [],
     };
@@ -124,18 +129,50 @@ export default {
       }
   },
   methods: {
-    async searchInfo(searchData){
-      let result = await getCollectInfoList(searchData);
-      this.dataArray = result.data?.infoList;
-      this.selectPage.total = this.dataArray?.length;
-    },
-    async initCollectData() {
+    async handleCurrentChange(newPage) {
+      // 处理当前页码改变事件
+      this.selectPage.currentPage = newPage;
+      // 重新加载数据
       let requestData = {
-        selectPage: this.selectPage
+          searchInput: this.searchData.searchInput,
+          showOther: this.searchData.showOther,// 是否增加其他条件
+          optionValue: this.searchData.optionValue,
+          startDate: this.formatDate(this.searchData.startDate),
+          endDate: this.formatDate(this.searchData.endDate),
+          currentPage: this.selectPage.currentPage,
+          pageSize: this.selectPage.pageSize,
+          offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
       };
       let result = await getCollectInfoList(requestData);
       this.dataArray = result.data?.infoList;
-      this.selectPage.total = this.dataArray?.length;
+      this.selectPage.total = result.data?.amount;
+    },
+    async searchInfo(searchData){
+      this.searchData = searchData;
+      const requestData = {
+          searchInput: this.searchData.searchInput,
+          showOther: this.searchData.showOther,// 是否增加其他条件
+          optionValue: this.searchData.optionValue,
+          startDate: this.formatDate(this.searchData.startDate),
+          endDate: this.formatDate(this.searchData.endDate),
+          currentPage: this.selectPage.currentPage,
+          pageSize: this.selectPage.pageSize,
+          offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
+      };
+      let result = await getCollectInfoList(requestData);
+      this.dataArray = result.data?.infoList;
+      this.selectPage.total = result.data?.amount;
+    },
+    async initCollectData() {
+      let requestData = {
+        currentPage: this.selectPage.currentPage,
+        pageSize: this.selectPage.pageSize,
+        total: this.selectPage.total,
+        offset: this.selectPage.offset,
+      };
+      let result = await getCollectInfoList(requestData);
+      this.dataArray = result.data?.infoList;
+      this.selectPage.total = result.data?.amount;
     },
     goToDesignPage() {
       this.$router.push({ path: "/collectInfoDesign", query: { state: 'add' } });
@@ -227,6 +264,15 @@ export default {
         }
       }
     },
+    formatDate(date) {
+      if (date == null) {
+        return null;
+      }
+      const year = date.getFullYear();
+      const month = ("0" + (date.getMonth() + 1)).slice(-2);
+      const day = ("0" + date.getDate()).slice(-2);
+      return `${year}-${month}-${day}`;
+    }
   }
 }
 </script>
