@@ -63,7 +63,7 @@
                  <el-dropdown-menu>
                    <el-dropdown-item @click="goToShow(data.iIFId)">查看表单</el-dropdown-item>
                    <el-dropdown-item @click="managerConfigShow(data.iIFId)" v-if="data.authority">发布配置</el-dropdown-item>
-                   <el-dropdown-item @click="goToDataShow(data.iIFId)" v-if="data.authority && (data.cIFState == '发布' || data.cIFState == '停止')">查看数据</el-dropdown-item>
+                   <el-dropdown-item @click="goToDataShow(data.iIFId,data.cIFTitle)" v-if="data.authority && (data.cIFState == '发布' || data.cIFState == '停止')">查看数据</el-dropdown-item>
                    <el-dropdown-item @click="publishForm(data)" v-if="data.authority && data.cIFState != '发布'">发布表单</el-dropdown-item>
                    <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState == '发布'">结束任务</el-dropdown-item>
                    <el-dropdown-item @click="goToEditPage(data.iIFId)" v-if="data.authority && data.cIFState != '发布'">编辑表单</el-dropdown-item>
@@ -185,6 +185,9 @@ export default {
     },
     managerConfigShow(iIFId) {
       this.$router.push({ path: "/PubConfig", query: { iTypeId: iIFId, cType: 'CollectInfo' } });
+    },
+    goToDataShow(iIFId,cIFTitle) {
+      this.$router.push({ path: "/CollectInfoData", query: { iTypeId: iIFId, cIFTitle: cIFTitle } });
     },
     editPage(iIFId) {
       // 在这里处理"修改页面"选项的事件

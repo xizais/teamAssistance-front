@@ -52,6 +52,12 @@ const routes = [
         component: () =>
             import ('@/components/Content/Work/Task/TaskInfoDesign')
     },
+    // 信息收集发布、停止数据展示
+    {
+        path: '/CollectInfoData',
+        component: () =>
+            import ('@/components/Content/Work/CollectInfo/CollectInfoData')
+    }
 ];
 
 const router = createRouter({
