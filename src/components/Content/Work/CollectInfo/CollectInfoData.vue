@@ -22,14 +22,14 @@
     <div style="height: 40px;">
       <div class="text-container">
         <span class="text-item">总数：{{dataCount.allMount}}</span>
-        <span class="text-item">待完成：{{dataCount.toDoMount}}</span>
+        <span class="text-item">未完成：{{dataCount.toDoMount}}</span>
         <span class="text-item">待审批：{{dataCount.toDoApprovalMount}}</span>
         <span class="text-item">已完成：{{dataCount.DoneMount}}</span>
       </div>
     </div>
     <el-table :data="filterTableData" style="width: 100%">
       <el-table-column label="学号" prop="code" />
-      <el-table-column label="姓名" prop="name" :cell-dblclick="chat()"/>
+      <el-table-column label="姓名" prop="name"/>
       <el-table-column label="所属" prop="org" />
       <el-table-column label="状态" prop="state" />
       <el-table-column align="right">
@@ -64,10 +64,10 @@ export default {
       state: null,
 
       dataCount: {
-        allMount: 7,
-        toDoMount: 2,
-        toDoApprovalMount: 2,
-        DoneMount: 3
+        allMount: 0,
+        toDoMount: 0,
+        toDoApprovalMount: 0,
+        DoneMount: 0
       },
 
       search: '', // 搜索关键字
@@ -133,10 +133,18 @@ export default {
   async mounted() {
     this.iIFId = this.$route.query.iIFId;
     this.cIFTitle = this.$route.query.cIFTitle;
-
+    this.calculateDataCount(this.tableData);
     // let request = {
     //   iIFId: this.iIFId
     // };
+  },
+  watch: {
+    tableData: {
+      handler(newData) {
+        this.calculateDataCount(newData);
+      },
+      deep: true
+    }
   },
   methods: {
     // 返回上一页
@@ -167,6 +175,20 @@ export default {
     handleDelete() {
 
     },
+    // 计算总数
+    calculateDataCount(data) {
+      const allMount = data.length;
+      const toDoMount = data.filter(item => item.state === '未完成').length;
+      const toDoApprovalMount = data.filter(item => item.state === '待审批').length;
+      const DoneMount = data.filter(item => item.state === '已完成').length;
+
+      this.dataCount = {
+        allMount,
+        toDoMount,
+        toDoApprovalMount,
+        DoneMount
+      };
+    }
   },
 }
 
