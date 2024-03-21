@@ -10,10 +10,9 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item @click="OneClickNotify()">一键提醒</el-dropdown-item>
-          <el-dropdown-item @click="ImportInfo()">信息导入</el-dropdown-item>
-          <el-dropdown-item @click="StopPublish()">停止发布</el-dropdown-item>
-          <el-dropdown-item @click="ResumePublish()">继续发布</el-dropdown-item>
-          <el-dropdown-item @click="DownTemplate()">模板下载</el-dropdown-item>
+          <el-dropdown-item @click="StopPublish()" v-if="isPub">停止发布</el-dropdown-item>
+          <el-dropdown-item @click="ResumePublish()" v-if="!isPub">继续发布</el-dropdown-item>
+          <el-dropdown-item @click="openPersonDialog()">新增人员</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -37,31 +36,109 @@
           <el-input v-model="search" size="small" placeholder="Type to search" @input="handleSearch" />
         </template>
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
-          >查看</el-button
-          >
+          <el-button size="small" @click="ClickNotify(scope.$index, scope.row)" v-show="tableData[scope.$index].state==='未完成'"
+          >提醒</el-button>
+          <el-button size="small" @click="ViewData(scope.$index, scope.row)" v-show="tableData[scope.$index].state==='已完成'"
+          >查看</el-button>
+          <el-button size="small" @click="ApprovalData(scope.$index, scope.row)" v-show="tableData[scope.$index].state==='待审批'"
+          >审批</el-button>
           <el-button
               size="small"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button
-          >
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+<!--    人员选择-->
+    <el-dialog
+        class="dialog-style"
+        title="选择人员"
+        v-model="dialogVisible"
+        @close="closePersonDialog"
+        :draggable="true"
+    >
+      <el-input
+          v-model="filterKeyword"
+          placeholder="请输入关键字进行筛选"
+          style="margin-bottom: 10px;"
+      ></el-input>
+      <el-table
+          :data="filteredPersons"
+          stripe
+          :row-key="getRowKey"
+          @selection-change="handleSelectionChange"
+          style="max-height: 400px; overflow-y: auto;"
+      >
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="personId" label="人员编号"></el-table-column>
+        <el-table-column prop="personName" label="人员名称"></el-table-column>
+        <el-table-column prop="personBelong" label="人员所属"></el-table-column>
+      </el-table>
+      <template #footer>
+        <el-button @click="closePersonDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmPersonSelection">确 定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {ElMessage} from "element-plus";
+import {ref} from "vue";
+import {getPubObject} from "@/request";
 
 export default {
   name: "CollectInfoData",
+  setup() {
+    //人员选择
+    let persons = ref([]);
+    const selectedPersons = ref([]);
+    const selectedPersonsCode = ref([]);
+    const dialogVisible = ref(false);
+    const openPersonDialog = () => {
+      dialogVisible.value = true;
+    };
+    const closePersonDialog = () => {
+      dialogVisible.value = false;
+    };
+    const handleSelectionChange = (selection) => {
+      selectedPersons.value = selection.map((item) => item.personName);
+      selectedPersonsCode.value = selection.map((item) => item.personId);
+    };
+    const confirmPersonSelection = () => {
+      const selectedValues = selectedPersons.value.join(', ');
+      // 将选中的值进行处理或传递给其他组件
+      console.log(selectedPersonsCode.value);
+      console.log(selectedValues);
+
+      dialogVisible.value = false;
+    };
+    const getRowKey = (row) => {
+      return row.personId; // 指定每行的唯一标识属性
+    };
+
+    return {
+      persons,
+      selectedPersons,
+      selectedPersonsCode,
+      dialogVisible,
+      openPersonDialog,
+      closePersonDialog,
+      handleSelectionChange,
+      confirmPersonSelection,
+      getRowKey,
+    };
+  },
   data() {
     return {
       iIFId: 0,
       cIFTitle: '',
       state: null,
+
+      // 操作权限:是否发布
+      isPub: true,
 
       dataCount: {
         allMount: 0,
@@ -70,6 +147,7 @@ export default {
         DoneMount: 0
       },
 
+      filterKeyword: '',// 新增人员搜索框过滤
       search: '', // 搜索关键字
       tableData: [
         {
@@ -129,14 +207,25 @@ export default {
             ;
       });
     },
+    filteredPersons() {
+      if (!this.filterKeyword) {
+        return this.persons;
+      }
+      const keyword = this.filterKeyword.toLowerCase();
+      return this.persons.filter(
+          (person) =>
+              String(person.personId).toLowerCase().includes(keyword) ||
+              person.personName.toLowerCase().includes(keyword) ||
+              person.personBelong.toLowerCase().includes(keyword)
+      );
+    },
   },
   async mounted() {
     this.iIFId = this.$route.query.iIFId;
     this.cIFTitle = this.$route.query.cIFTitle;
     this.calculateDataCount(this.tableData);
-    // let request = {
-    //   iIFId: this.iIFId
-    // };
+    const result = await getPubObject();
+    this.persons = result.code==0?result.data.persons:ref([]);
   },
   watch: {
     tableData: {
