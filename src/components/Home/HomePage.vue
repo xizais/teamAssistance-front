@@ -53,6 +53,11 @@ export default {
               id:'1-3',
               name:'组织信息',
               path:'/collectInfo'
+            },
+            {
+              id:'1-4',
+              name:'聊天',
+              path:'/talk'
             }
           ]},
         {

@@ -35,6 +35,12 @@ const routes = [
                 component: () =>
                     import ('@/components/Content/Work/Task/TaskHome')
             },
+            //聊天
+            {
+                path: '/talk',
+                component: () =>
+                    import ('@/components/Content/Message/Talk')
+            },
         ]
     },
     { path: '/collectInfoDesign', component: CollectInfoDesign },
