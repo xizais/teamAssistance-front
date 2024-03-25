@@ -3,91 +3,89 @@
     <div style="display: flex; flex-direction: column;">
       <div style="display: flex;">
         <SearchPage :type="'collectInfo'" @searchInfo="searchInfo"/>
-        <el-button class="collect-button" @click="goToDesignPage()">信息创建</el-button>
-        <el-button class="collect-button" @click="goToEditPage(4)">信息模板</el-button>
       </div>
       <div class="wrapper">
-       <template
-          v-for="(data,index) in dataArray"
-          :key="data.iIFId"
-       >
-         <template v-if="index===0">
-           <div class="container" style="font-weight: bolder; font-size: 18px">
-             <div class="left">
-               <div class="left-title">
-                 <span class="left-fontStyle">标题</span>
-               </div>
-               <div class="left-time">
-                 <span class="left-fontStyle">创建|发布时间</span>
-               </div>
-               <div class="left-creator">
-                 <span class="left-fontStyle">创建者|发布者</span>
-               </div>
-               <div class="left-creator">
-                 <span class="left-fontStyle">状态</span>
-               </div>
-             </div>
-             <div class="right">
-               <div class="left-creator" style="text-align: right;padding-right: 10%">
-                 <span class="left-fontStyle">操作</span>
-               </div>
-             </div>
-           </div>
-         </template>
-         <div class="container">
-           <div class="left">
-             <div class="left-title">
-               <span class="left-fontStyle">{{ data.cIFTitle }}</span>
-             </div>
-             <template v-if="data.cIFState === '发布'">
-               <div class="left-time">
-                 <span class="left-fontStyle">{{ data.standerPubTime }}</span>
-               </div>
-             </template>
-             <template v-else>
-               <div class="left-time">
-                 <span class="left-fontStyle">{{ data.standerCreateTime }}</span>
-               </div>
-             </template>
-             <div class="left-creator">
-               <span class="left-fontStyle">{{ data.cIFPuber }}</span>
-             </div>
-             <div class="left-creator">
-               <span class="left-fontStyle">{{ data.cIFState }}</span>
-             </div>
-           </div>
-           <div class="right">
-             <el-dropdown split-button >
-               操作
-               <template #dropdown>
-                 <el-dropdown-menu>
-                   <el-dropdown-item @click="goToShow(data.iIFId)">查看表单</el-dropdown-item>
-                   <el-dropdown-item @click="managerConfigShow(data.iIFId)" v-if="data.authority">发布配置</el-dropdown-item>
-                   <el-dropdown-item @click="goToDataShow(data.iIFId,data.cIFTitle,data.cIFState)" v-if="data.authority && (data.cIFState == '发布' || data.cIFState == '停止')">查看数据</el-dropdown-item>
-                   <el-dropdown-item @click="publishForm(data)" v-if="data.authority && data.cIFState != '发布'">发布表单</el-dropdown-item>
-                   <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState == '发布'">结束任务</el-dropdown-item>
-                   <el-dropdown-item @click="goToEditPage(data.iIFId)" v-if="data.authority && data.cIFState != '发布'">编辑表单</el-dropdown-item>
-                   <el-dropdown-item @click="deleteForm(data)" v-if="data.authority && data.cIFState != '发布'">删除表单</el-dropdown-item>
-                 </el-dropdown-menu>
-               </template>
-             </el-dropdown>
+        <template
+            v-for="(data,index) in dataArray"
+            :key="data.iIFId"
+        >
+          <template v-if="index===0">
+            <div class="container" style="font-weight: bolder; font-size: 18px">
+              <div class="left">
+                <div class="left-time">
+                  <span class="left-fontStyle">内容</span>
+                </div>
+                <div class="left-title">
+                  <span class="left-fontStyle">工作类型</span>
+                </div>
+                <div class="left-creator">
+                  <span class="left-fontStyle">创建时间</span>
+                </div>
+                <div class="left-creator">
+                  <span class="left-fontStyle">状态</span>
+                </div>
+              </div>
+              <div class="right">
+                <div class="left-creator" style="text-align: right;padding-right: 10%">
+                  <span class="left-fontStyle">操作</span>
+                </div>
+              </div>
+            </div>
+          </template>
+          <div class="container">
+            <div class="left">
+              <div class="left-title">
+                <span class="left-fontStyle">{{ data.cIFTitle }}</span>
+              </div>
+              <template v-if="data.cIFState === '发布'">
+                <div class="left-time">
+                  <span class="left-fontStyle">{{ data.standerPubTime }}</span>
+                </div>
+              </template>
+              <template v-else>
+                <div class="left-time">
+                  <span class="left-fontStyle">{{ data.standerCreateTime }}</span>
+                </div>
+              </template>
+              <div class="left-creator">
+                <span class="left-fontStyle">{{ data.cIFPuber }}</span>
+              </div>
+              <div class="left-creator">
+                <span class="left-fontStyle">{{ data.cIFState }}</span>
+              </div>
+            </div>
+            <div class="right">
+              <el-dropdown split-button >
+                操作
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item @click="goToShow(data.iIFId)">查看表单</el-dropdown-item>
+                    <el-dropdown-item @click="managerConfigShow(data.iIFId)" v-if="data.authority">发布配置</el-dropdown-item>
+                    <el-dropdown-item @click="goToDataShow(data.iIFId,data.cIFTitle,data.cIFState)" v-if="data.authority && (data.cIFState == '发布' || data.cIFState == '停止')">查看数据</el-dropdown-item>
+                    <el-dropdown-item @click="publishForm(data)" v-if="data.authority && data.cIFState != '发布'">发布表单</el-dropdown-item>
+                    <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState == '发布'">结束任务</el-dropdown-item>
+                    <el-dropdown-item @click="goToEditPage(data.iIFId)" v-if="data.authority && data.cIFState != '发布'">编辑表单</el-dropdown-item>
+                    <el-dropdown-item @click="deleteForm(data)" v-if="data.authority && data.cIFState != '发布'">删除表单</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
 
-           </div>
-         </div>
-       </template>
+            </div>
+          </div>
+        </template>
       </div>
 
       <div class="container-selectPage" v-show="!show">
-          <div class="demo-pagination-block">
-            <el-pagination
-                v-model:current-page="selectPage.currentPage"
-                v-model:page-size="selectPage.pageSize"
-                small="small"
-                layout="total, prev, pager, next, jumper"
-                :total="selectPage.total"
-                @current-change="handleCurrentChange"
-            />
-          </div>
+        <div class="demo-pagination-block">
+          <el-pagination
+              v-model:current-page="selectPage.currentPage"
+              v-model:page-size="selectPage.pageSize"
+              small="small"
+              layout="total, prev, pager, next, jumper"
+              :total="selectPage.total"
+              @current-change="handleCurrentChange"
+          />
+        </div>
       </div>
       <div v-show="show">
         <el-empty description="无数据" />
@@ -98,7 +96,7 @@
 
 <script>
 import SearchPage from "@/components/Content/Work/SearchPage";
-import {deleteCollectInfo, getCollectInfoList, pubCollectInfo} from "@/request";
+import {deleteCollectInfo, getCollectInfoList, pubCollectInfo ,getWorkInfoList} from "@/request";
 import {ElMessage} from "element-plus";
 export default {
   name: "CollectInfoHome",
@@ -123,10 +121,10 @@ export default {
     this.initCollectData();// 初始话数据
   },
   computed:{
-      show(){
-        const show = this.dataArray?.length ? false : true;
-        return show;
-      }
+    show(){
+      const show = this.dataArray?.length ? false : true;
+      return show;
+    }
   },
   methods: {
     async handleCurrentChange(newPage) {
@@ -134,14 +132,14 @@ export default {
       this.selectPage.currentPage = newPage;
       // 重新加载数据
       let requestData = {
-          searchInput: this.searchData.searchInput,
-          showOther: this.searchData.showOther,// 是否增加其他条件
-          optionValue: this.searchData.optionValue,
-          startDate: this.formatDate(this.searchData.startDate),
-          endDate: this.formatDate(this.searchData.endDate),
-          currentPage: this.selectPage.currentPage,
-          pageSize: this.selectPage.pageSize,
-          offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
+        searchInput: this.searchData.searchInput,
+        showOther: this.searchData.showOther,// 是否增加其他条件
+        optionValue: this.searchData.optionValue,
+        startDate: this.formatDate(this.searchData.startDate),
+        endDate: this.formatDate(this.searchData.endDate),
+        currentPage: this.selectPage.currentPage,
+        pageSize: this.selectPage.pageSize,
+        offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
       };
       let result = await getCollectInfoList(requestData);
       this.dataArray = result.data?.infoList;
@@ -150,30 +148,37 @@ export default {
     async searchInfo(searchData){
       this.searchData = searchData;
       const requestData = {
-          searchInput: this.searchData.searchInput,
-          showOther: this.searchData.showOther,// 是否增加其他条件
-          optionValue: this.searchData.optionValue,
-          startDate: this.formatDate(this.searchData.startDate),
-          endDate: this.formatDate(this.searchData.endDate),
-          currentPage: this.selectPage.currentPage,
-          pageSize: this.selectPage.pageSize,
-          offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
-      };
-      let result = await getCollectInfoList(requestData);
-      this.dataArray = result.data?.infoList;
-      this.selectPage.total = result.data?.amount;
-    },
-    async initCollectData() {
-      let requestData = {
+        searchInput: this.searchData.searchInput,
+        showOther: this.searchData.showOther,// 是否增加其他条件
+        optionValue: this.searchData.optionValue,
+        startDate: this.formatDate(this.searchData.startDate),
+        endDate: this.formatDate(this.searchData.endDate),
         currentPage: this.selectPage.currentPage,
         pageSize: this.selectPage.pageSize,
-        total: this.selectPage.total,
-        offset: this.selectPage.offset,
+        offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
       };
       let result = await getCollectInfoList(requestData);
       this.dataArray = result.data?.infoList;
       this.selectPage.total = result.data?.amount;
     },
+
+
+
+
+
+
+    // 初始化数据
+    async initCollectData() {
+      let requestData = {
+        "selectPage": this.selectPage
+      };
+      let result = await getWorkInfoList(requestData);
+      this.dataArray = result.data?.workList;
+      this.selectPage.total = result.data?.amount;
+    },
+
+
+
     goToDesignPage() {
       this.$router.push({ path: "/collectInfoDesign", query: { state: 'add' } });
     },

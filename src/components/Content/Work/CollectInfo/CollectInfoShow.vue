@@ -22,7 +22,7 @@
         :key="container.id"
         class="container-box"
         :style="{
-          width: container.width + '%',
+          width: container.width + 'px',
           height: container.height + 'px',
           border: container.showBorder ? parseInt(container.borderWidth) + 'px' + ' solid #000' : 'none',
           borderRadius: container.showRadius ? parseInt(container.borderRadius) + 'px' : '0px',

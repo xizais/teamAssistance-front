@@ -456,7 +456,7 @@
         :key="container.id"
         class="container-box"
         :style="{
-          width: container.width + '%',
+          width: container.width + 'px',
           height: container.height + 'px',
           border: container.showBorder ? parseInt(container.borderWidth) + 'px' + ' solid #000' : 'none',
           borderRadius: container.showRadius ? parseInt(container.borderRadius) + 'px' : '0px',
@@ -656,7 +656,7 @@ export default {
         const containerId = this.selectedContainer.id;
         this.selectedContainer = {
           id: containerId,
-          width: 60,// 百分比显示
+          width: 800,// 百分比显示
           height: 500,// px显示
           showBorder: true,// 显示边框
           borderWidth: 1,// 边框粗度
@@ -921,7 +921,7 @@ export default {
     addContainer() {
       const newContainer = {
         id: this.generateIndex,
-        width: 60,// 百分比显示
+        width: 800,// 百分比显示
         height: 500,// px显示
         showBorder: true,// 显示边框
         borderWidth: 1,// 边框粗度

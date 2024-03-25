@@ -12,6 +12,8 @@ import CollectInfoShow from "@/components/Content/Work/CollectInfo/CollectInfoSh
 import OrgHome from "@/components/Content/Organization/OrgHome";
 // 发布配置
 import PubConfig from "@/components/Content/Work/PubConfig";
+import CollectInfoDataDetails from "@/components/Content/Work/CollectInfo/CollectInfoDataDetails.vue";
+import WorkInfo from "@/components/Content/Work/WorkInfo.vue";
 
 const routes = [
     { path: '/', component: LoginPage },
@@ -20,6 +22,7 @@ const routes = [
         component: HomePage,
         redirect: '/collectInfoHome', // 默认定向路径
         children: [
+            { path: '/workInfo', component: WorkInfo },
             { path: '/messageHome', component: MessageHome },
             { path: '/collectInfoHome', component: CollectInfoHome },
             { path: '/OrgHome', component: OrgHome },
@@ -45,6 +48,7 @@ const routes = [
     },
     { path: '/collectInfoDesign', component: CollectInfoDesign },
     { path: '/CollectInfoShow', component: CollectInfoShow },
+    { path: '/CollectInfoDataDetails', component: CollectInfoDataDetails },
     { path: '/PubConfig', component: PubConfig },
     // 通知创建
     {

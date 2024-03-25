@@ -7,12 +7,12 @@
     <span class="title">{{cIFTitle}}数据展示</span>
     <el-dropdown split-button >
       操作
-      <template #dropdown>
+      <template #dropdown v-if="isPubed">
         <el-dropdown-menu>
-          <el-dropdown-item @click="OneClickNotify()">一键提醒</el-dropdown-item>
-          <el-dropdown-item @click="StopPublish()" v-if="isPub">停止发布</el-dropdown-item>
-          <el-dropdown-item @click="ResumePublish()" v-if="!isPub">继续发布</el-dropdown-item>
-          <el-dropdown-item @click="openPersonDialog()">新增人员</el-dropdown-item>
+          <el-dropdown-item @click="OneClickNotify()" v-if="isPub">一键提醒</el-dropdown-item>
+          <el-dropdown-item @click="reverseState(isPub)" v-if="isPub">停止发布</el-dropdown-item>
+          <el-dropdown-item @click="reverseState(isPub)" v-if="!isPub">继续发布</el-dropdown-item>
+          <el-dropdown-item @click="openPersonDialog()" v-if="isPub">新增人员</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -36,16 +36,16 @@
           <el-input v-model="search" size="small" placeholder="Type to search" @input="handleSearch" />
         </template>
         <template #default="scope">
-          <el-button size="small" @click="ClickNotify(scope.$index, scope.row)" v-show="tableData[scope.$index].state==='未完成'"
+          <el-button size="small" @click="ClickNotify(scope.row)" v-show="isPub&&tableData[scope.$index].state==='未完成'"
           >提醒</el-button>
-          <el-button size="small" @click="ViewData(scope.$index, scope.row)" v-show="tableData[scope.$index].state==='已完成'"
+          <el-button size="small" @click="ViewData(scope.row)" v-show="tableData[scope.$index].state==='已完成'"
           >查看</el-button>
-          <el-button size="small" @click="ApprovalData(scope.$index, scope.row)" v-show="tableData[scope.$index].state==='待审批'"
+          <el-button size="small" @click="ApprovalData(scope.row)" v-show="isPub&&tableData[scope.$index].state==='待审批'"
           >审批</el-button>
           <el-button
               size="small"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
+              @click="handleDelete(scope.row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -78,7 +78,7 @@
       </el-table>
       <template #footer>
         <el-button @click="closePersonDialog">取 消</el-button>
-        <el-button type="primary" @click="confirmPersonSelection">确 定</el-button>
+        <el-button type="primary" @click="confirmPersonSelection(this.iIFId)">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -87,7 +87,15 @@
 <script>
 import {ElMessage} from "element-plus";
 import {ref} from "vue";
-import {getPubObject} from "@/request";
+import {
+  getPubObject,
+  deleteCollectDataById,
+  getFromData,
+  clickNotify,
+  reverseState,
+  addFromDataPerson,
+  getPubState
+} from "@/request";
 
 export default {
   name: "CollectInfoData",
@@ -96,6 +104,7 @@ export default {
     let persons = ref([]);
     const selectedPersons = ref([]);
     const selectedPersonsCode = ref([]);
+    const selectedOrgName = ref([]);
     const dialogVisible = ref(false);
     const openPersonDialog = () => {
       dialogVisible.value = true;
@@ -106,13 +115,29 @@ export default {
     const handleSelectionChange = (selection) => {
       selectedPersons.value = selection.map((item) => item.personName);
       selectedPersonsCode.value = selection.map((item) => item.personId);
+      selectedOrgName.value = selection.map((item) => item.personBelong);
     };
-    const confirmPersonSelection = () => {
-      const selectedValues = selectedPersons.value.join(', ');
+    const  confirmPersonSelection = async (iIFId) => {
       // 将选中的值进行处理或传递给其他组件
-      console.log(selectedPersonsCode.value);
-      console.log(selectedValues);
-
+      // console.log(selectedPersonsCode.value);
+      // console.log(selectedValues);
+      const requestData = {
+        iIFId: iIFId,
+        codeArray: selectedPersonsCode.value,
+        nameArray: selectedPersons.value,
+        orgArray: selectedOrgName.value,
+      };
+      const result = await addFromDataPerson(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      ElMessage.success(result.data.message);
+      location.reload(); // 刷新当前页面
       dialogVisible.value = false;
     };
     const getRowKey = (row) => {
@@ -138,6 +163,7 @@ export default {
       state: null,
 
       // 操作权限:是否发布
+      isPubed: false,
       isPub: true,
 
       dataCount: {
@@ -149,50 +175,7 @@ export default {
 
       filterKeyword: '',// 新增人员搜索框过滤
       search: '', // 搜索关键字
-      tableData: [
-        {
-          code: '201549221',
-          name: '黄晓斌',
-          org: '20软工二班',
-          state: '未完成',
-        },
-        {
-          code: '201549122',
-          name: '谢玄',
-          org: '20软工一班',
-          state: '未完成',
-        },
-        {
-          code: '201549223',
-          name: '莉亚',
-          org: '20软工二班',
-          state: '待审批',
-        },
-        {
-          code: '201549224',
-          name: '赵恒',
-          org: '20软工二班',
-          state: '待审批',
-        },
-        {
-          code: '201549225',
-          name: '王五',
-          org: '20软工二班',
-          state: '已完成',
-        },
-        {
-          code: '201549126',
-          name: '李四',
-          org: '20软工一班',
-          state: '已完成',
-        },
-        {
-          code: '201549127',
-          name: '张三',
-          org: '20软工一班',
-          state: '已完成',
-        },
-      ],
+      tableData: [],
 
     };
   },
@@ -226,6 +209,8 @@ export default {
     this.calculateDataCount(this.tableData);
     const result = await getPubObject();
     this.persons = result.code==0?result.data.persons:ref([]);
+    this.getFromData();
+    this.getFromPubState();
   },
   watch: {
     tableData: {
@@ -240,30 +225,119 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    OneClickNotify() {
 
+    async getFromData() {
+      const requestData = {
+        iIFId: this.iIFId,
+      };
+      const result = await getFromData(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message)
+        return;
+      }
+      this.tableData = result.data.fromData;
     },
-    ImportInfo() {
 
-    },
-    StopPublish() {
+    async getFromPubState() {
+      const requestData = {
+        iIFId: this.iIFId
+      };
+      const result = await getPubState(requestData);
+      if (result  == null || result == undefined || result.code != 0) {
+        ElMessage.error("操作失败!")
+      }
+      this.isPubed = result.data.isPubed;
+      this.isPub = result.data.isPub;
 
+      console.log(result.data)
+      console.log(this.isPub)
     },
-    ResumePublish() {
 
+    async OneClickNotify() {
+      const requestData = {
+        type: 'all',
+        iIFId: this.iIFId
+      };
+      const result = await clickNotify(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message)
+        return;
+      }
+      ElMessage.success(result.data.message)
     },
-    DownTemplate() {
 
+    async reverseState() {
+      const requestData = {
+        iIFId: this.iIFId,
+      }
+      const result = await reverseState(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message)
+        return;
+      }
+      ElMessage.success(result.data.message)
+      this.isPub = !this.isPub;
     },
-    chat() {
-      ElMessage.success("ok");
-    },
-    handleEdit() {
 
+    async ClickNotify(data) {
+      const requestData = {
+        type: 'one',
+        iIFId: this.iIFId,
+        id: data.id
+      };
+      const result = await clickNotify(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message)
+        return;
+      }
+      ElMessage.success(result.data.message)
     },
-    handleDelete() {
 
+    ViewData(data) {
+      this.$router.push({ path: "/CollectInfoDataDetails", query: { iIFId: this.iIFId, id: data.id, type: 'view'} });
     },
+
+    ApprovalData(data) {
+      this.$router.push({ path: "/CollectInfoDataDetails", query: { iIFId: this.iIFId, id: data.id,
+          code: data.code, name: data.name, type: 'approval',
+          title: this.cIFTitle,
+      } });
+    },
+
+    async handleDelete(data) {
+      const requestData = {
+        id: data.id,
+        iIFId: this.iIFId
+      };
+      const result = await deleteCollectDataById(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message)
+        return;
+      }
+      this.getFromData();
+      ElMessage.success(result.message)
+    },
+
     // 计算总数
     calculateDataCount(data) {
       const allMount = data.length;
@@ -277,8 +351,10 @@ export default {
         toDoApprovalMount,
         DoneMount
       };
-    }
+    },
+
   },
+
 }
 
 </script>

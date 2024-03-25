@@ -66,13 +66,8 @@ export default {
           child:[
             {
               id:'2-1',
-              name:'待完成工作',
-              path:'/collectInfo'
-            },
-            {
-              id:'2-2',
-              name:'已完成工作',
-              path:'/collectInfo'
+              name:'工作信息',
+              path:'/workInfo'
             },
             {
               id:'2-3',
