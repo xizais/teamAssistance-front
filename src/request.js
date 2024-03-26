@@ -1,8 +1,9 @@
 import requests from "../src/api"
 
-
+// 用户处理
 export const userLogin = (data) => requests({ url: '/api/User/login',method: 'post', data });// 用户登入
 
+// 信息收集处理
 export const getCollectInfoList = (data) => requests({ url: '/api/CollectInfo/getCollectInfoList',method: 'post', data });// 获取表单配置信息列表
 export const saveCollect = (data) => requests({ url: '/api/CollectInfo/saveCollectDesign',method: 'post', data });// 保存表单元素数据
 export const getCollectInfo = (data) => requests({ url: '/api/CollectInfo/getCollectInfo',method: 'post', data });// 获取表单配置与元素数据
@@ -15,16 +16,34 @@ export const reverseState = (data) => requests({ url: '/api/CollectInfo/reverseS
 export const deleteCollectDataById = (data) => requests({ url: '/api/CollectInfo/deleteCollectDataById',method: 'post', data });// 删除表单收集个人数据
 export const addFromDataPerson = (data) => requests({ url: '/api/CollectInfo/addFromDataPerson',method: 'post', data });// 添加表单收集个人数据
 export const getPubState = (data) => requests({ url: '/api/CollectInfo/getPubState',method: 'post', data });// 获取表单发布状态
+export const saveFromPersonData = (data) => requests({ url: '/api/CollectInfo/saveFromPersonData',method: 'post', data });// 保存表单个人数据
+export const getFromDataId = (data) => requests({ url: '/api/CollectInfo/getFromDataId',method: 'post', data });// 获取当前处理人对应收集表单的记录ID
+
+// 通知管理处理
+export const saveNoticeManager = (data) => requests({ url: '/api/NoticeManager/saveNoticeManager',method: 'post', data });// 保存/修改通知管理内容
+export const deleteNotifyInfo = (data) => requests({ url: '/api/NoticeManager/deleteNotifyInfo',method: 'post', data });// 作废通知管理内容
+export const getNotifyInfoList = (data) => requests({ url: '/api/NoticeManager/getNotifyInfoList',method: 'post', data });// 获取信息展示列表
+export const getNotifyInfo = (data) => requests({ url: '/api/NoticeManager/getNotifyInfo',method: 'post', data });// 获取信息
+export const pubNotify = (data) => requests({ url: '/api/NoticeManager/pubNotify',method: 'post', data });// 发布通知
+
+// 任务管理处理
 
 
+// 发布配置处理
 export const getPubObject = (data) => requests({ url: '/api/PubConfig/getPubObjectInfo',method: 'post', data });// 获取发布配置对象数据
 export const getPubConfigInfo = (data) => requests({ url: '/api/PubConfig/getPubConfigInfo',method: 'post', data });// 获取发布配置数据
 export const savePubConfig = (data) => requests({ url: '/api/PubConfig/savePubConfig',method: 'post', data });// 保存或更新发布配置数据
 
 
-export const handleWorkTask = (data) => requests({ url: '/api/WorkTask/handleWorkTask',method: 'post', data });// 审批数据
+// 工作待办处理
+export const handleWorkTask = (data) => requests({ url: '/api/WorkTask/handleWorkTask',method: 'post', data });// 处理工作待办
 export const getWorkInfoList = (data) => requests({ url: '/api/WorkTask/getWorkInfoList',method: 'post', data });// 获取个人工作信息
+export const deleteWorkTask = (data) => requests({ url: '/api/WorkTask/deleteWorkTask',method: 'post', data });// 删除已完成的工作记录
 
+
+
+// 文件处理
+export const uploadFile = (data) => requests({ url: '/api/File/uploadFile',method: 'post', data });// 上传文件
 
 
 

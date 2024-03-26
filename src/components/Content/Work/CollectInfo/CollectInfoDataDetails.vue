@@ -5,15 +5,9 @@
       <el-icon><ArrowLeftBold /></el-icon>
     </el-button>
     <span class="title">{{ title }}</span>
-    <el-dropdown split-button >
-      操作
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item @click="saveData()">暂存</el-dropdown-item>
-          <el-dropdown-item @click="submit()">提交</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
+    <div>
+      状态：{{this.cState}}
+    </div>
   </div>
   <div class="content">
     <!-- 内容 -->
@@ -138,7 +132,7 @@
         <template v-if="child.type === 'checkbox'">
           <el-checkbox-group
               :disabled="isView"
-              v-model="child.defaultText.value"
+              v-model="child.defaultText"
               :min="child.minOption"
               :max="child.maxOption"
           >
@@ -200,21 +194,19 @@
       </div>
     </div>
   </template>
-  <template v-if="!this.isView">
-    <div class="config">
-      <div class="config-title">
-        表单数据信息
-      </div>
-      <div class="config-content">
-        数据分类：按组织分类、不分类
-        数据显示：分页，表格展示
+
+  <template v-if="!isView && !this.isApproval && this.cState == '未完成'">
+    <div class="approval">
+      <div class="approval_button">
+        <el-button @click="goBack()">关闭</el-button>
+        <el-button @click="submit()">提交</el-button>
       </div>
     </div>
   </template>
 </template>
 
 <script>
-import {getCollectInfoAndPersonData,handleWorkTask} from "@/request";
+import {getCollectInfoAndPersonData,handleWorkTask,saveFromPersonData} from "@/request";
 import {ElMessage} from "element-plus";
 
 export default {
@@ -226,6 +218,8 @@ export default {
       code: '',
       name: '',
       state: null,
+      cState: '',
+      workTaskId: 0,
       title: '表单数据',
       infoForm: {},// 表单配置信息
       authority: false,// 用户是否有操作权限
@@ -251,6 +245,7 @@ export default {
     this.iIFId = this.$route.query.iIFId;
     this.code = this.$route.query.code;
     this.name = this.$route.query.name;
+    this.workTaskId = this.$route.query.workTaskId;
     this.isApproval = this.$route.query.type == 'approval';
     this.isView = this.isApproval ? true: this.$route.query.type == 'view';
     let request = {
@@ -266,6 +261,7 @@ export default {
       ElMessage.error("操作失败！")
       return;
     }
+    this.cState = result.data.cState;
     this.infoForm = result.data.infoForm;
     this.containers = result.data.containers;
     this.title = result.data.infoForm.ciftitle;
@@ -278,11 +274,10 @@ export default {
     },
     async approvalSubmit (){
       const requestData = {
+        workTaskId: this.workTaskId,
         typeId: this.iIFId,
         id: this.id,
         type: 'CollectInfoApproval',
-        code: this.code,
-        name: this.name,
         title: this.title,
         approvalResult: this.approvalResult,
         approvalCotent: this.approvalCotent,
@@ -298,7 +293,28 @@ export default {
       }
       ElMessage.success(result.data.message);
       this.goBack();
-    }
+    },
+
+    // 提交数据
+    async submit(){
+      const requestData = {
+        "containers":this.containers,
+        "workTaskId":this.workTaskId,
+        "id": this.id,
+        "iIFId": this.iIFId
+      }
+      const result = await saveFromPersonData(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！")
+        return;
+      }
+      if (result.code != 0){
+        ElMessage.error(result.message);
+        return;
+      }
+      ElMessage.success(result.data?.message);
+      this.goBack();
+    },
   },
 }
 </script>

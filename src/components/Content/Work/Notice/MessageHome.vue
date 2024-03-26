@@ -2,14 +2,16 @@
   <div class="outer-container">
     <div style="display: flex; flex-direction: column;">
       <div style="display: flex;">
-        <SearchPage :type="'collectInfo'" @searchInfo="searchInfo"/>
+        <div style="width: 500px;height: 40px;margin-left: 10px">
+          <el-input style="width: 300px;" v-model="searchInput" placeholder="请输入筛选内容"></el-input>
+          <el-button class="container-button" type="primary" style="margin-left: 4px" @click="this.searchInput=''">重置</el-button>
+        </div>
         <el-button class="collect-button" @click="goToMsgPage()">通知创建</el-button>
-        <el-button class="collect-button" @click="goToEditPage(4)">通知模板</el-button>
       </div>
       <div class="wrapper">
        <template
-          v-for="(data,index) in dataArray"
-          :key="data.iIFId"
+          v-for="(data,index) in filteredArray"
+          :key="data.iNMId"
        >
          <template v-if="index===0">
            <div class="container" style="font-weight: bolder; font-size: 18px">
@@ -21,7 +23,7 @@
                  <span class="left-fontStyle">创建时间|发布时间</span>
                </div>
                <div class="left-creator">
-                 <span class="left-fontStyle">创建者|发布者</span>
+                 <span class="left-fontStyle">发布者</span>
                </div>
                <div class="left-creator">
                  <span class="left-fontStyle">状态</span>
@@ -37,43 +39,36 @@
          <div class="container">
            <div class="left">
              <div class="left-title">
-               <span class="left-fontStyle">{{ data.cIFTitle }}</span>
+               <span class="left-fontStyle">{{ data.cNMTitle }}</span>
              </div>
-             <template v-if="data.cIFState === '发布'">
+             <template v-if="data.cNMState === '发布'">
                <div class="left-time">
-                 <span class="left-fontStyle">{{ data.standerPubTime }}</span>
+                 <span class="left-fontStyle">{{ data.dNMUpdateTime }}</span>
                </div>
              </template>
              <template v-else>
                <div class="left-time">
-                 <span class="left-fontStyle">{{ data.standerCreateTime }}</span>
+                 <span class="left-fontStyle">{{ data.dNMCreateTime }}</span>
                </div>
              </template>
              <div class="left-creator">
-               <span class="left-fontStyle">{{ data.cIFPuber }}</span>
+               <span class="left-fontStyle">{{ data.cNMPubName }}</span>
              </div>
              <div class="left-creator">
-               <span class="left-fontStyle">{{ data.cIFState }}</span>
+               <span class="left-fontStyle">{{ data.cNMState }}</span>
              </div>
            </div>
            <div class="right">
-<!--             <button>结束任务</button>-->
-<!--             <button @click="goToEditPage(data.iIFId)" v-if="data.cIFState !== '发布'">表单修改</button>-->
-<!--             <button v-if="data.cIFState === '发布'">任务修改</button>-->
-<!--             <button @click="goToShow(data.iIFId)">查看</button>-->
-
              <el-dropdown split-button >
                操作
                <template #dropdown>
                  <el-dropdown-menu>
-                   <el-dropdown-item @click="goToShow(data.iIFId)">查看表单</el-dropdown-item>
-                   <el-dropdown-item @click="(data.iIFId)" v-if="data.authority">查看配置</el-dropdown-item>
-                   <el-dropdown-item @click="(data.iIFId)" v-if="data.authority && (data.cIFState === '发布' || data.cIFState === '停止')">查看数据</el-dropdown-item>
-                   <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">发布任务</el-dropdown-item>
-                   <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState === '发布'">结束任务</el-dropdown-item>
-                   <el-dropdown-item @click="goToEditPage(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">表单处理</el-dropdown-item>
-                   <el-dropdown-item @click="publishForm(data.iIFId)" v-if="data.authority && data.cIFState !== '发布'">配置处理</el-dropdown-item>
-                   <el-dropdown-item @click="deleteForm(data)" v-if="data.authority && data.cIFState !== '发布'">删除表单</el-dropdown-item>
+                   <el-dropdown-item @click="goToShow(data.iNMId)">查看通知</el-dropdown-item>
+                   <el-dropdown-item @click="editNotify(data.iNMId)" v-if="data.cNMState == '草稿'">修改通知</el-dropdown-item>
+                   <el-dropdown-item @click="deleteNotify(data.iNMId)">删除通知</el-dropdown-item>
+                   <el-dropdown-item @click="managerConfigShow(data.iNMId)">发布配置</el-dropdown-item>
+                   <el-dropdown-item @click="pubNotifyInfo(data.iNMId)" v-if="data.cNMState == '草稿'">发布通知</el-dropdown-item>
+                   <el-dropdown-item @click="(data.iNMId)" v-if="data.cNMState == '发布'">查看数据</el-dropdown-item>
                  </el-dropdown-menu>
                </template>
              </el-dropdown>
@@ -83,17 +78,6 @@
        </template>
       </div>
 
-      <div class="container-selectPage" v-show="!show">
-          <div class="demo-pagination-block">
-            <el-pagination
-                v-model:current-page="selectPage.currentPage"
-                v-model:page-size="selectPage.pageSize"
-                small="small"
-                layout="total, prev, pager, next, jumper"
-                :total="selectPage.total"
-            />
-          </div>
-      </div>
       <div v-show="show">
         <el-empty description="无数据" />
       </div>
@@ -102,131 +86,91 @@
 </template>
 
 <script>
-import SearchPage from "@/components/Content/Work/SearchPage";
-import {deleteCollectInfo, getCollectInfoList} from "@/request";
+import {deleteNotifyInfo, getNotifyInfoList, pubNotify} from "@/request";
 import {ElMessage} from "element-plus";
 export default {
   name: "NoticeHome",
-  components: {SearchPage},
   data() {
     return {
-      selectPage: {
-        currentPage: 1,
-        pageSize: 10,
-        total: 0,
-      },
+      searchInput: '',
       dataArray: [],
     };
   },
 
   // 页面初始化加载
   mounted() {
-    this.initCollectData();// 初始话数据
+    this.initInfoData();// 初始话数据
   },
   computed:{
       show(){
         const show = this.dataArray?.length ? false : true;
         return show;
-      }
+      },
+      filteredArray() {
+        // 使用筛选条件过滤数组对象
+        return this.dataArray.filter(item => {
+          return item?.cNMTitle?.includes(this.searchInput)
+              || item?.dNMUpdateTime?.includes(this.searchInput)
+              || item?.dNMCreateTime?.includes(this.searchInput)
+              || item?.cNMPubName?.includes(this.searchInput)
+              || item?.cNMState?.includes(this.searchInput)
+              ;
+        });
+    }
+
   },
   methods: {
-    async searchInfo(searchData){
-      let result = await getCollectInfoList(searchData);
+    async initInfoData() {
+      let result = await getNotifyInfoList();
       this.dataArray = result.data?.infoList;
-      this.selectPage.total = this.dataArray?.length;
     },
-    async initCollectData() {
-      let requestData = {
-        selectPage: this.selectPage
-      };
-      let result = await getCollectInfoList(requestData);
-      this.dataArray = result.data?.infoList;
-      this.selectPage.total = this.dataArray?.length;
-    },
+
     goToMsgPage() {
       this.$router.push({ path: "/noticeInfoDesign", query: { state: 'add' } });
     },
-    goToEditPage(iIFId) {
-      this.$router.push({ path: "/collectInfoDesign", query: { state: 'edit',iIFId: iIFId } });
+    goToShow(iNMId) {
+      this.$router.push({ path: "/noticeInfoDesign", query: { state: 'view',iNMId: iNMId } });
     },
-    goToShow(iIFId) {
-      this.$router.push({ path: "/CollectInfoShow", query: { state: 'show',iIFId: iIFId } });
+    editNotify(iNMId) {
+      this.$router.push({ path: "/noticeInfoDesign", query: { state: 'edit',iNMId: iNMId } });
     },
-    editPage(iIFId) {
-      // 在这里处理"修改页面"选项的事件
-      if (this.infoForm.cifstate === '发布') {
-        ElMessage.warning("发布中不允许修改！");
+
+    async deleteNotify(iNMId){
+      const requestData = {
+        iNMId: iNMId
+      }
+      const result = await deleteNotifyInfo(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
         return;
       }
-      if (this.infoForm.cifstate === '停止') {
-        ElMessage.warning("已停止，不允许修改！");
+      if (result.code != 0) {
+        ElMessage.error(result.message);
         return;
       }
-      this.$router.push({ path: "/collectInfoDesign", query: { state: 'edit',iIFId: iIFId } });
+      ElMessage.success(result.data.message);
+      this.initInfoData()
     },
-    editConfig(iIFId) {
-      // 在这里处理"修改配置"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置！");
-        return;
-      }
 
-      console.log(iIFId)
-
+    managerConfigShow(iNMId) {
+      this.$router.push({ path: "/PubConfig", query: { iTypeId: iNMId, cType: 'Notify' } });
     },
-    publishForm(iIFId) {
-      // 在这里处理"发布表单"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置,不允许发布！");
+
+    async pubNotifyInfo(iNMId) {
+      const requestData = {
+        iTypeId: iNMId
+      }
+      const result = await pubNotify(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
         return;
       }
-      if (this.infoForm.cifstate === '发布') {
-        ElMessage.warning("不允许重复发布！");
+      if (result.code != 0) {
+        ElMessage.error(result.message);
         return;
       }
-
-      console.log(iIFId)
-
-
-    },
-    saveTemplate(iIFId) {
-      // 保存表单模板
-      ElMessage.info("saveTemplate");
-      console.log(iIFId)
-    },
-    closePublish(iIFId) {
-      // 在这里处理"关闭发布"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置,不允许停止！");
-        return;
-      }
-      if (this.infoForm.cifstate === '停止') {
-        ElMessage.warning("不允许重复停止！");
-        return;
-      }
-
-      console.log(iIFId)
-
-    },
-    async deleteForm(data) {
-      // 在这里处理"删除表单"选项的事件
-      if (data.cIFState === '发布') {
-        ElMessage.warning("发布中，不允许删除！");
-        return;
-      }
-      const confirmed = confirm('确认删除吗？');
-      if (confirmed) {
-        const requestData = {
-          iIFId: data.iIFId
-        };
-        let result = await deleteCollectInfo(requestData);
-        if (result.code == '0') {
-          ElMessage.success(result.data);
-          this.initData();
-        } else {
-          ElMessage.error(result.message);
-        }
-      }
+      ElMessage.success(result.data.message);
+      this.initInfoData();
     },
   }
 }
@@ -341,5 +285,11 @@ export default {
 
 .wrapper {
   text-align: center;
+}
+
+.collect-button{
+  margin-left: 630px;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 </style>

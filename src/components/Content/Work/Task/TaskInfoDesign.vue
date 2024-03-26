@@ -18,10 +18,12 @@
         type="textarea"
         :placeholder=text
         :readonly="isSave"
+        :maxlength="20"
+        show-word-limit
       />
       </div>
       <div class="detail-item">
-        <div>任务详细内容描述:</div>
+        <div>任务内容:</div>
         <el-input
         v-model="taskContent"
         style="width: 60%;font-size: 18px;  padding-left: 18px;"
@@ -29,10 +31,12 @@
         type="textarea"
         :placeholder= text
         :readonly="isSave"
+        :maxlength="200"
+        show-word-limit
       />
       </div>
       <div class="detail-item">
-        <div>任务要求描述:</div>
+        <div>任务要求:</div>
         <el-input
         v-model="taskRequire"
         style="width: 60%;font-size: 18px;  padding-left: 18px;"
@@ -40,6 +44,8 @@
         type="textarea"
         :placeholder= text
         :readonly="isSave"
+        :maxlength="200"
+        show-word-limit
       />
       </div>
       <!-- 上传文件 -->
@@ -57,9 +63,9 @@
       </template>
     </el-upload>
     </div>
-    
+
   </template>
-  
+
   <script>
   export default {
   name:'MessageInfoDesign',
@@ -100,7 +106,7 @@
   }
   }
   </script>
-  
+
   <style scoped>
   .navbar {
     background-color: #cbef8e;
@@ -115,7 +121,7 @@
     right: 0;
     z-index: 1;
   }
-  
+
   .title {
     flex: 1;
     font-size: 18px;
@@ -123,19 +129,19 @@
     text-align: center;
     padding-left: 3%;
   }
-  
+
   .nav-button {
     font-size: 14px;
   }
-  
+
   .detail,
   .save{
     width:70%;
-    padding: 48px 0;
+    padding: 100px 0;
     font-size: 18px;
     margin: 0 auto;
   }
-  
+
   .detail-item{
     display: flex;
     align-items: flex-start;
@@ -157,7 +163,7 @@
     white-space: normal;
     word-break: break-all;
   }
-  
+
   .detail-item div{
     width: 10%;
   }
@@ -166,5 +172,5 @@
     width: 70%;
     margin-left: 16%;
   }
-  
+
   </style>

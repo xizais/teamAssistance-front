@@ -4,7 +4,7 @@
         <div style="display: flex;">
           <SearchPage :type="'collectInfo'" @searchInfo="searchInfo"/>
           <el-button class="collect-button" @click="goToMsgPage()">任务创建</el-button>
-          <el-button class="collect-button" @click="goToEditPage(4)">任务模板</el-button>
+<!--          <el-button class="collect-button" @click="goToEditPage(4)">任务模板</el-button>-->
         </div>
         <div class="wrapper">
          <template

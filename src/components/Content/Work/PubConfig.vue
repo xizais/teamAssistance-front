@@ -7,13 +7,13 @@
       <el-form-item label="发布开始时间">
         <el-date-picker v-model="form.startDate" type="date" :readonly="isReadOnly"></el-date-picker>
       </el-form-item>
-      <el-form-item label="发布停止时间">
+      <el-form-item label="发布停止时间" v-if="!isNotify">
         <el-date-picker v-model="form.endDate" type="date" :readonly="isReadOnly"></el-date-picker>
       </el-form-item>
-      <el-form-item label="是否进行审核">
+      <el-form-item label="是否进行审核" v-if="!isNotify">
         <el-switch v-model="form.reviewEnabled" :disabled="isReadOnly"></el-switch>
       </el-form-item>
-      <el-form-item label="是否启用组织管理">
+      <el-form-item label="是否启用组织管理" v-if="!isNotify">
         <el-switch v-model="form.orgEnabled" :disabled="isReadOnly"></el-switch>
       </el-form-item>
       <el-form-item label="发布者名称">
@@ -274,6 +274,7 @@ export default {
       filterKeywordFlag: '',
 
       isReadOnly: true,// view
+      isNotify: false,// 是否是通知
     };
   },
   mounted() {
@@ -281,6 +282,13 @@ export default {
     this.iTypeId = this.$route.query.iTypeId;
     if (this.cType == 'CollectInfo') {
       this.form.tableType = '信息收集';
+    }
+    if (this.cType == 'Notify') {
+      this.isNotify = true;
+      this.form.tableType = '通知管理';
+    }
+    if (this.cType == 'Task') {
+      this.form.tableType = '任务管理';
     }
     this.getPubObject();// 获取发布对象数据
     this.getConfigInfo();// 获取初始化数据
@@ -299,7 +307,7 @@ export default {
         iTypeId: this.iTypeId,
       };
       const result = await getPubConfigInfo(requestData);
-      if (result.data.pubConfig!=null) {
+      if (result.data?.pubConfig!=null) {
         const pubConfig = result.data.pubConfig;
         this.form.startDate = pubConfig.dPubStartTime;
         this.form.endDate = pubConfig.dPubEndTime;

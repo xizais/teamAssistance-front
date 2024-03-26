@@ -67,7 +67,7 @@ export default {
             {
               id:'2-1',
               name:'工作信息',
-              path:'/workInfo'
+              path:'/workInfoHome'
             },
             {
               id:'2-3',
