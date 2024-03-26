@@ -83,6 +83,11 @@ export default {
               id:'2-5',
               name:'信息收集',
               path:'/collectInfoHome'
+            },
+            {
+              id:'2-6',
+              name:'场地信息',
+              path:'/siteInfoHome'
             }
           ]},
         {
