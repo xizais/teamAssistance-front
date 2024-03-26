@@ -44,6 +44,12 @@ const routes = [
                 component: () =>
                     import ('@/components/Content/Message/Talk')
             },
+            //场地信息
+            {
+                path: '/siteInfoHome',
+                component: () =>
+                    import ('@/components/Content/Work/Site/SiteInfoHome')
+            },
         ]
     },
     { path: '/collectInfoDesign', component: CollectInfoDesign },
@@ -67,6 +73,18 @@ const routes = [
         path: '/CollectInfoData',
         component: () =>
             import ('@/components/Content/Work/CollectInfo/CollectInfoData')
+    },
+    //管理场地信息
+    {
+        path: '/manageSite',
+        component: () =>
+            import ('@/components/Content/Work/Site/ManageSite')
+    },
+    //查看预约信息
+    {
+        path: '/reserveSite',
+        component: () =>
+            import ('@/components/Content/Work/Site/ReserveSite')
     }
 ];
 
