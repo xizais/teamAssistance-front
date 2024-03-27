@@ -156,7 +156,7 @@ export default {
       },
       filteredArray() {
         // 使用筛选条件过滤数组对象
-        return this.dataArray.filter(item => {
+        return this.dataArray?.filter(item => {
           return item?.cNMTitle?.includes(this.searchInput)
               || item?.dNMUpdateTime?.includes(this.searchInput)
               || item?.dNMCreateTime?.includes(this.searchInput)

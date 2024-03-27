@@ -10,50 +10,59 @@
       <span>预约场地名称:</span>
       <div class="search-container">
         <el-input v-model="searchInfo" placeholder="请输入搜索内容"></el-input>
-        <el-button class="container-button" type="primary" @click="searchItem()">搜索</el-button>
       </div>
+      <el-button class="addBtn" type="primary" @click="addItem()">新增</el-button>
     </div>
+    <el-tooltip placement="top">
+      <template #content> multiple lines<br />second line </template>
+      <div>Top center</div>
+    </el-tooltip>
     <div class="detail">
       <div class="td">
         <div class="site-name">场地名称</div>
         <div class="site-detail">场地地点</div>
+        <div class="site-name">场地负责人</div>
+        <div class="site-detail">联系方式</div>
         <div class="operate">操作</div>
       </div>
-      <div class="td" v-for="item in dataList" :key="item.id">
-        <div class="site-name">{{ item.place }}</div>
-        <div class="site-detail">{{ item.detail }}</div>
+      <div class="td" v-for="item in dataInfo" :key="item.iAIId">
+        <div class="site-name">{{ item.cAIName }}
+        </div>
+        <div class="site-detail">{{ item.cAIContent }}</div>
+        <div class="site-name">{{ item.cAIManagerName }}</div>
+        <div class="site-detail">{{ item.cAIManagerPhone }}</div>
         <div class="operate">
-          <el-button class="edit" @click="edit(item)">编辑</el-button>
-          <el-button class="delete" @click="deleteItem(item)">删除</el-button>
+          <el-button class="edit" @click="edit(item.iAIId)">编辑</el-button>
+          <el-button class="delete" @click="deleteItem(item.iAIId)">删除</el-button>
         </div>
       </div>
     </div>
+    <div class="mask" v-show="showDialog"></div>
     <!-- 弹框 -->
     <div class="dialog" v-show="showDialog">
       <div class="dia-top">场地信息编辑</div>
       <div class="dia-body">
         <div class="dia-item">
           <div class="dia-title">场地名称：</div>
-          <el-input v-model="sitePlace" placeholder="请输入搜索内容"></el-input>
+          <el-input v-model="sitePlace" placeholder="请输入内容"></el-input>
         </div>
         <div class="dia-item">
           <div class="dia-title">场地地点: </div>
-          <el-input v-model="siteInfo" placeholder="请输入搜索内容"></el-input>
+          <el-input v-model="siteInfo" placeholder="请输入内容"></el-input>
         </div>
         <div class="dia-item">
           <div class="dia-title">场地负责人: </div>
-          <el-input v-model="sitePerson" placeholder="请输入搜索内容"></el-input>
+          <el-input v-model="sitePerson" placeholder="请输入内容"></el-input>
         </div>
         <div class="dia-item">
           <div class="dia-title">联系方式: </div>
-          <el-input v-model="siteTel" placeholder="请输入搜索内容"></el-input>
+          <el-input v-model="siteTel" placeholder="请输入内容"></el-input>
         </div>
         <div>
           <div class="dia-title">是否开放场地: </div>
-          <el-radio-group v-model="siteOpen">
-            <el-radio :value="3">是</el-radio>
-            <el-radio :value="6">否</el-radio>
-          </el-radio-group>
+          <el-switch v-model="siteOpen" />
+          <div class="dia-title" style="margin-left: 250px">是否需要审批: </div>
+          <el-switch v-model="siteApprove" />
         </div>
       </div>
       <div class="dia-btn">
@@ -65,36 +74,27 @@
 </template>
 
 <script>
+import { ElMessage } from 'element-plus';
+import { addArea, deleteArea, getAreaList, editArea } from "@/request";
 export default {
   name:'manage-site',
   data(){
     return {
-      dataList:[
-        {
-          id:0,
-          place:'教学楼1',
-          detail:'1栋202'
-        },
-        {
-          id:1,
-          place:'教学楼2',
-          detail:'1栋202'
-        },
-        {
-          id:2,
-          place:'教学楼3',
-          detail:'1栋202'
-        }
-      ],
+      dataList:[],
       showDialog:false,  //展示弹框
       searchInfo:'', //搜索场地名称
-      currentItem:{}, //存放当前对象
-      sitePlace:'',//场地名称
-      siteInfo:'',//场地地点
-      sitePerson:'',//场地负责人
-      siteTel:'',//联系方式
-      siteOpen:3 //是否开放
+      currentItem:null, //存放当前对象
+      sitePlace:null,//场地名称
+      siteInfo:null,//场地地点
+      sitePerson:null,//场地负责人
+      siteTel:null,//联系方式
+      siteOpen:true, //是否开放
+      siteApprove:true, //是否需要审批
     }
+  },
+  mounted() {
+    //获取列表
+    this.getDataList();
   },
   methods:{
     // 返回上一页
@@ -102,38 +102,87 @@ export default {
       this.$router.go(-1);
     },
     //获取数据
-    getDataList(){
-
+    async getDataList(){
+      let result = await getAreaList({});
+      this.dataList = result?.data.infoList;
     },
     //编辑
-    edit(value){
+    async edit(value){
       this.showDialog = true;
+      let result = await editArea({iAIId:value});
+      if(result && result.code == 0){
+        this.sitePlace = result.data.cAIName;
+        this.siteInfo = result.data.cAIContent;
+        this.sitePerson = result.data.cAIManagerName;
+        this.siteTel = result.data.cAIManagerPhone;
+        this.siteOpen = result.data.bAIIsEnable;
+        this.siteApprove = result.data.bAIIsApprove;
+      }
       this.currentItem = value;
     },
     //删除
-    deleteItem(value){
-      console.log(value,'value');
+    async deleteItem(value){
+      let result = await deleteArea({iAIId:value});
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      ElMessage.success(result.data.message);
+      this.showDialog = false;
+      this.getDataList();
+    },
+    //新增
+    addItem(){
+      this.itePlace=null;
+      this.siteInfo=null;
+      this.sitePerson=null;
+      this.siteTel=null;
+      this.siteOpen=true;
+      this.siteApprove=true;
+      this.showDialog = true;
     },
     //取消弹框
     cancel(){
       this.showDialog = false;
     },
     //保存
-    save(){
+    async save(){
+      let data = {
+        cAIName:this.sitePlace,
+        cAIContent:this.siteInfo,
+        bAIIsEnable:this.siteOpen,
+        bAIIsApprove:this.siteApprove,
+        cAIManagerName:this.siteTel,
+        cAIManagerPhone:this.siteTel,
+        iAIId:this.currentItem
+      };
+      let result = await addArea(data);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      ElMessage.success(result.data.message);
       this.showDialog = false;
-      console.log(this.currentItem,'balue');
-    },
-    //查询数据
-    searchItem(){
-      let data = [];
-      this.dataList.forEach((item)=>{
-        if(item.place.includes(this.searchInfo)){
-          data.push(item);
-        }
-      });
-      this.dataList = data;
-      console.log(data,'data');
+      this.getDataList();
     }
+  },
+  computed:{
+    dataInfo(){
+      return this.dataList.filter(item => {
+        return item.cAIName.includes(this.searchInfo)
+            || item.cAIContent.includes(this.searchInfo)
+            || item.cAIManagerName.includes(this.searchInfo);
+      });
+    }
+
   }
 }
 </script>
@@ -175,6 +224,10 @@ export default {
   margin-top: 48px;
   text-align: left;
   font-size: 18px;
+}
+
+.addBtn{
+  margin-left: 550px;
 }
 
 .search-container {
@@ -233,15 +286,16 @@ export default {
 
 .dialog{
   position: absolute;
-  width: 650px;
-  height: 380px;
+  width: 850px;
+  height: 480px;
   background-color: #fff;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  border-radius: 15px;
-  border: 1px solid #000;
+  border-radius: 10px;
+  /*border: 1px solid #000;*/
   overflow: auto;
+  z-index:10;
 }
 
 .dialog .dia-top{
@@ -257,13 +311,13 @@ export default {
   width: 100%;
   text-align: left;
   box-sizing: border-box;
-  padding: 10px 20px;
+  padding: 20px;
 }
 
 .dialog .dia-item{
   width: 100%;
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .dialog .dia-body .dia-title{
@@ -285,7 +339,7 @@ export default {
 
 .dialog .dia-btn .cancel,
 .dialog .dia-btn .save{
-  width: 50px;
+  width: 60px;
   height: 30px;
   text-align: center;
   line-height: 30px;
@@ -298,5 +352,15 @@ export default {
 .container-button {
   margin: 0;
   margin-left: 4px;
+}
+
+.mask{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index:2;
+  background-color: rgba(0,0,0,0.5);
 }
 </style>

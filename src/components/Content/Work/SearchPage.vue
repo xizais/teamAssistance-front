@@ -8,7 +8,7 @@
     <div class="search-other" v-show="showOther">
       <el-date-picker v-model="this.startDate" type="date" placeholder="开始日期" />
       <el-date-picker v-model="this.endDate" type="date" placeholder="结束日期" />
-      <el-select v-model="optionValue" placeholder="数据状态" size="large" style="width: 140px">
+      <el-select v-model="optionValue" placeholder="数据状态" size="large" style="width: 140px" v-if="showStatus">
         <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.value" />
       </el-select>
     </div>
@@ -77,6 +77,10 @@ export default {
     type: {
       type: String,
       required: true
+    },
+    showStatus:{
+      type:Boolean,
+      default:true
     }
   }
 }

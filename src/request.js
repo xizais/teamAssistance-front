@@ -46,6 +46,11 @@ export const deleteWorkTask = (data) => requests({ url: '/api/WorkTask/deleteWor
 // 文件处理
 export const uploadFile = (data) => requests({ url: '/api/File/uploadFile',method: 'post', data });// 上传文件
 
-
-
-
+//场地管理
+export const addArea = (data) => requests({ url: '/api/Area/addAreaInfo',method: 'post', data });//新增场地
+export const deleteArea = (data) => requests({ url: '/api/Area/deleteAreaInfo',method: 'post', data });//删除场地
+export const getAreaList = (data) => requests({ url: '/api/Area/getAreaInfoList',method: 'post', data });//列表
+export const editArea = (data) => requests({ url: '/api/Area/getAreaInfo',method: 'post', data });//编辑
+export const addAreaBook = (data) => requests({ url: '/api/Area/addAreaBook',method: 'post', data });//新增预约
+export const deleteAreaBook = (data) => requests({ url: '/api/Area/deleteAreaBook',method: 'post', data });//删除预约
+export const getAreaBookList = (data) => requests({ url: '/api/Area/getAreaBookList',method: 'post', data });//预约列表

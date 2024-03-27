@@ -2,29 +2,26 @@
   <div class="outer-container">
     <div style="display: flex; flex-direction: column;">
       <div style="display: flex;">
-        <SearchPage :type="'collectInfo'" @searchInfo="searchInfo"/>
+        <SearchPage :type="'collectInfo'" @searchInfo="searchInfo" :show-status="false"/>
         <el-button class="collect-button" @click="goSiteInfo">管理场地信息</el-button>
         <el-button class="collect-button" @click="goToReservePage">查看预约信息</el-button>
       </div>
-      <div class="wrapper">
+      <div class="wrapper" v-show="show">
         <template
-            v-for="(data,index) in dataArray"
-            :key="data.iIFId"
+            v-for="(data,index) in dataList"
+            :key="data.id"
         >
           <template v-if="index===0">
             <div class="container" style="font-weight: bolder; font-size: 18px">
               <div class="left">
                 <div class="left-title">
-                  <span class="left-fontStyle">标题</span>
+                  <span class="left-fontStyle">场地名称</span>
                 </div>
                 <div class="left-time">
-                  <span class="left-fontStyle">创建|发布时间</span>
+                  <span class="left-fontStyle">场地位置</span>
                 </div>
                 <div class="left-creator">
-                  <span class="left-fontStyle">创建者|发布者</span>
-                </div>
-                <div class="left-creator">
-                  <span class="left-fontStyle">状态</span>
+                  <span class="left-fontStyle">场地负责人</span>
                 </div>
               </div>
               <div class="right">
@@ -37,47 +34,22 @@
           <div class="container">
             <div class="left">
               <div class="left-title">
-                <span class="left-fontStyle">{{ data.cIFTitle }}</span>
+                <span class="left-fontStyle">{{ data.cAIName }}</span>
               </div>
-              <template v-if="data.cIFState === '发布'">
                 <div class="left-time">
-                  <span class="left-fontStyle">{{ data.standerPubTime }}</span>
+                  <span class="left-fontStyle">{{ data.cAIContent }}</span>
                 </div>
-              </template>
-              <template v-else>
                 <div class="left-time">
-                  <span class="left-fontStyle">{{ data.standerCreateTime }}</span>
+                  <span class="left-fontStyle">{{ data.cAIManagerName }}</span>
                 </div>
-              </template>
-              <div class="left-creator">
-                <span class="left-fontStyle">{{ data.cIFPuber }}</span>
-              </div>
-              <div class="left-creator">
-                <span class="left-fontStyle">{{ data.cIFState }}</span>
-              </div>
             </div>
             <div class="right">
-              <el-dropdown split-button >
-                操作
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item @click="goToShow(data.iIFId)">查看表单</el-dropdown-item>
-                    <el-dropdown-item @click="managerConfigShow(data.iIFId)" v-if="data.authority">发布配置</el-dropdown-item>
-                    <el-dropdown-item @click="goToDataShow(data.iIFId,data.cIFTitle,data.cIFState)" v-if="data.authority && (data.cIFState == '发布' || data.cIFState == '停止')">查看数据</el-dropdown-item>
-                    <el-dropdown-item @click="publishForm(data)" v-if="data.authority && data.cIFState != '发布'">发布表单</el-dropdown-item>
-                    <el-dropdown-item @click="editPage(data.iIFId)" v-if="data.authority && data.cIFState == '发布'">结束任务</el-dropdown-item>
-                    <el-dropdown-item @click="goToEditPage(data.iIFId)" v-if="data.authority && data.cIFState != '发布'">编辑表单</el-dropdown-item>
-                    <el-dropdown-item @click="deleteForm(data)" v-if="data.authority && data.cIFState != '发布'">删除表单</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-
+              <el-button class="collect-button" @click="goReserve(data.iAIId)">预约</el-button>
             </div>
           </div>
         </template>
       </div>
-
-      <div class="container-selectPage" v-show="!show">
+      <div class="container-selectPage" v-show="show">
         <div class="demo-pagination-block">
           <el-pagination
               v-model:current-page="selectPage.currentPage"
@@ -89,8 +61,31 @@
           />
         </div>
       </div>
-      <div v-show="show">
+      <div v-show="!show">
         <el-empty description="无数据" />
+      </div>
+    </div>
+    <div class="mask" v-show="showDialog"></div>
+    <!-- 弹框 -->
+    <div class="dialog" v-show="showDialog">
+      <div class="dia-top">预约场地时间</div>
+      <div class="dia-body">
+        <div class="dia-item">
+          <div class="block">
+            <span class="demonstration">时间选择:</span>
+            <el-date-picker
+                v-model="time"
+                type="datetimerange"
+                range-separator="To"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="dia-btn">
+        <el-button class="cancel" @click="cancel">取消</el-button>
+        <el-button class="save" @click="save">保存</el-button>
       </div>
     </div>
   </div>
@@ -98,8 +93,8 @@
 
 <script>
 import SearchPage from "@/components/Content/Work/SearchPage";
-import {deleteCollectInfo, getCollectInfoList, pubCollectInfo} from "@/request";
 import {ElMessage} from "element-plus";
+import {addAreaBook, getAreaList} from "@/request";
 export default {
   name: "CollectInfoHome",
   components: {SearchPage},
@@ -114,160 +109,70 @@ export default {
       searchData: {
         'searchInfo': {}
       },
-      dataArray: [],
+      showDialog:false,
+      dataArray:[],
+      time:[],
+      targetItem:'',
     };
   },
 
   // 页面初始化加载
   mounted() {
-    this.initCollectData();// 初始话数据
+    this.getdataList();
   },
   computed:{
     show(){
-      const show = this.dataArray?.length ? false : true;
-      return show;
+      return this.dataList.length? true : false;
+    },
+    dataList(){
+      return this.dataArray.filter(item=>{
+        return item.bAIIsEnable == true;
+      })
     }
   },
   methods: {
-    async handleCurrentChange(newPage) {
-      // 处理当前页码改变事件
-      this.selectPage.currentPage = newPage;
-      // 重新加载数据
-      let requestData = {
-        searchInput: this.searchData.searchInput,
-        showOther: this.searchData.showOther,// 是否增加其他条件
-        optionValue: this.searchData.optionValue,
-        startDate: this.formatDate(this.searchData.startDate),
-        endDate: this.formatDate(this.searchData.endDate),
-        currentPage: this.selectPage.currentPage,
-        pageSize: this.selectPage.pageSize,
-        offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
-      };
-      let result = await getCollectInfoList(requestData);
-      this.dataArray = result.data?.infoList;
-      this.selectPage.total = result.data?.amount;
-    },
-    async searchInfo(searchData){
-      this.searchData = searchData;
-      const requestData = {
-        searchInput: this.searchData.searchInput,
-        showOther: this.searchData.showOther,// 是否增加其他条件
-        optionValue: this.searchData.optionValue,
-        startDate: this.formatDate(this.searchData.startDate),
-        endDate: this.formatDate(this.searchData.endDate),
-        currentPage: this.selectPage.currentPage,
-        pageSize: this.selectPage.pageSize,
-        offset: (this.selectPage.currentPage-1) * this.selectPage.pageSize
-      };
-      let result = await getCollectInfoList(requestData);
-      this.dataArray = result.data?.infoList;
-      this.selectPage.total = result.data?.amount;
-    },
-    async initCollectData() {
-      let requestData = {
-        currentPage: this.selectPage.currentPage,
-        pageSize: this.selectPage.pageSize,
-        total: this.selectPage.total,
-        offset: this.selectPage.offset,
-      };
-      let result = await getCollectInfoList(requestData);
-      this.dataArray = result.data?.infoList;
-      this.selectPage.total = result.data?.amount;
-    },
     goSiteInfo() {
-      this.$router.push({ path: "/manageSite", query: { state: 'add' } });
+      this.$router.push({ path: "/manageSite"});
     },
     goToReservePage() {
-      this.$router.push({ path: "/reserveSite", query: { state: 'see'} });
+      this.$router.push({ path: "/reserveSite" });
     },
-    goToShow(iIFId) {
-      this.$router.push({ path: "/CollectInfoShow", query: { state: 'show',iIFId: iIFId } });
+    async getdataList(){
+      let result = await getAreaList({});
+      if(result && result.code == 0){
+        this.dataArray = result.data.infoList;
+      }
     },
-    managerConfigShow(iIFId) {
-      this.$router.push({ path: "/PubConfig", query: { iTypeId: iIFId, cType: 'CollectInfo' } });
+    goReserve(value){
+      this.showDialog = true;
+      this.targetItem = value;
     },
-    goToDataShow(iIFId,cIFTitle,cIFState) {
-      this.$router.push({ path: "/CollectInfoData", query: { iIFId: iIFId, cIFTitle: cIFTitle ,cIFState: cIFState} });
+    //取消弹框
+    cancel(){
+      this.showDialog = false;
     },
-    editPage(iIFId) {
-      // 在这里处理"修改页面"选项的事件
-      if (this.infoForm.cifstate === '发布') {
-        ElMessage.warning("发布中不允许修改！");
+    //保存
+    async save(){
+      let data = {
+        iAIId: this.targetItem,
+        dABBookStartTime:this.formatDate(this.time[0]),
+        dABBookEndTime:this.formatDate(this.time[1])
+      };
+      let result = await addAreaBook(data);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
         return;
       }
-      if (this.infoForm.cifstate === '停止') {
-        ElMessage.warning("已停止，不允许修改！");
-        return;
-      }
-      this.$router.push({ path: "/collectInfoDesign", query: { state: 'edit',iIFId: iIFId } });
-    },
-    editConfig(iIFId) {
-      // 在这里处理"修改配置"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置！");
-        return;
-      }
-
-      console.log(iIFId)
-
-    },
-    async publishForm(data) {
-      // 在这里处理"发布表单"选项的事件
-      if (data.cifstate === '发布') {
-        ElMessage.warning("不允许重复发布！");
-        return;
-      }
-      const requesData = {
-        iTypeId: data.iIFId
-      }
-      const result = await pubCollectInfo(requesData);
-      if (result.code == 0) {
-        ElMessage.success(result.data.message);
-        this.initCollectData();
-      } else {
+      if (result.code != 0) {
         ElMessage.error(result.message);
-      }
-    },
-    saveTemplate(iIFId) {
-      // 保存表单模板
-      ElMessage.info("saveTemplate");
-      console.log(iIFId)
-    },
-    closePublish(iIFId) {
-      // 在这里处理"关闭发布"选项的事件
-      if (this.infoForm.cifstate === '草稿') {
-        ElMessage.warning("不存在表单配置,不允许停止！");
         return;
       }
-      if (this.infoForm.cifstate === '停止') {
-        ElMessage.warning("不允许重复停止！");
-        return;
-      }
+      ElMessage.success(result.data.message);
+      this.showDialog = false;
+    },
 
-      console.log(iIFId)
-
-    },
-    async deleteForm(data) {
-      // 在这里处理"删除表单"选项的事件
-      if (data.cIFState === '发布') {
-        ElMessage.warning("发布中，不允许删除！");
-        return;
-      }
-      const confirmed = confirm('确认删除吗？');
-      if (confirmed) {
-        const requestData = {
-          iIFId: data.iIFId
-        };
-        let result = await deleteCollectInfo(requestData);
-        if (result.code == '0') {
-          ElMessage.success(result.data);
-          this.initData();
-        } else {
-          ElMessage.error(result.message);
-        }
-      }
-    },
     formatDate(date) {
+      console.log(date)
       if (date == null) {
         return null;
       }
@@ -276,6 +181,7 @@ export default {
       const day = ("0" + date.getDate()).slice(-2);
       return `${year}-${month}-${day}`;
     }
+
   }
 }
 </script>
@@ -284,6 +190,7 @@ export default {
 .outer-container {
   display: flex;
   width: 100%;
+  font-family: Kaiti;
 }
 
 .outer-container > div {
@@ -389,5 +296,102 @@ export default {
 
 .wrapper {
   text-align: center;
+}
+
+.dialog{
+  position: absolute;
+  width: 850px;
+  height: 300px;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  border-radius: 10px;
+  /*border: 1px solid #000;*/
+  overflow: auto;
+  z-index:10;
+}
+
+.dialog .dia-top{
+  width: 100%;
+  height: 60px;
+  font-size: 24px;
+  text-align: center;
+  line-height: 60px;
+  border-bottom: 2px solid #e9e9e9;
+}
+
+.dialog .dia-body{
+  width: 100%;
+  text-align: left;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.dialog .dia-item{
+  width: 100%;
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.dialog .dia-body .dia-title{
+  display: inline-block;
+  width: 135px;
+  height: 30px;
+  line-height: 30px;
+  text-align: left;
+  margin: 5px 0;
+}
+
+.dialog .dia-btn{
+  width:100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog .dia-btn .cancel,
+.dialog .dia-btn .save{
+  width: 60px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+}
+
+.dialog .dia-btn .cancel{
+  margin-right: 60px;
+}
+
+.container-button {
+  margin: 0;
+  margin-left: 4px;
+}
+
+.mask{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index:2;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.block {
+  padding: 10px 0;
+  text-align: center;
+  border-right: solid 1px var(--el-border-color);
+  flex: 1;
+  font-family: Kaiti;
+}
+.block:last-child {
+  border-right: none;
+}
+.block .demonstration {
+  display: block;
+  color: #000;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 </style>
