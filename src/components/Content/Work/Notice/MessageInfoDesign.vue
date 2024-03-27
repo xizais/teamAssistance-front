@@ -134,7 +134,7 @@ methods:{
     },
 
     goBack(){
-        this.$router.push('/noticeHome');
+      this.$router.go(-1);
     },
     // 保存表单
     async saveForm(){

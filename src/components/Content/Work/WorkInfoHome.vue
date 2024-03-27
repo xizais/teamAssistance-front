@@ -63,8 +63,8 @@
                   <el-dropdown-menu>
                     <el-dropdown-item @click="viewContent(data.content)">查看内容</el-dropdown-item>
                     <el-dropdown-item @click="viewData(data.id,data.type,data.typeId)">查看数据</el-dropdown-item>
-                    <el-dropdown-item @click="goToHandle(data.id,data.type,data.typeId)" v-if="data.state == '草稿'">前往处理</el-dropdown-item>
-                    <el-dropdown-item @click="deleteForm(data.id)" v-if="data.state != '草稿'">删除记录</el-dropdown-item>
+                    <el-dropdown-item @click="goToHandle(data.id,data.type,data.typeId)" v-if="data.state == '草稿' || data.state == '待确认'">前往处理</el-dropdown-item>
+                    <el-dropdown-item @click="deleteForm(data.id)" v-if="data.state != '草稿' &&  data.state != '待确认'">删除记录</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -182,7 +182,9 @@ export default {
         this.$router.push({ path: "/CollectInfoDataDetails", query: { workTaskId:workTaskId, iIFId: typeId, id: id, type: 'view'} });
 
 
-      } else if (state == '信息收集审批') {
+      }
+
+      else if (state == '信息收集审批') {
         const requestData = {
           iIFId: typeId,
         };
@@ -198,6 +200,10 @@ export default {
         const id = result.data.id;// 当前人员对应的表单的信息收集记录
 
         this.$router.push({ path: "/CollectInfoDataDetails", query: { workTaskId:workTaskId, iIFId: typeId, id: id, type: 'view'} });
+      }
+
+      else if (state == '通知') {
+        this.$router.push({ path: "/noticeInfoDesign", query: { iNMId: typeId, state: 'view'} });
       }
     },
 
@@ -217,7 +223,9 @@ export default {
         this.$router.push({ path: "/CollectInfoDataDetails", query: { iIFId: typeId,id: id, workTaskId: workTaskId, type: 'edit'} });
 
 
-      } else if (state == '信息收集审批') {
+      }
+
+      else if (state == '信息收集审批') {
         //这个id需要更改为对应的信息收集表单的id
         const requestData = {
           iIFId: typeId,
@@ -232,6 +240,10 @@ export default {
         const id = result.data.id;// 当前人员对应的表单的信息收集记录
 
         this.$router.push({ path: "/CollectInfoDataDetails", query: {workTaskId: workTaskId, iIFId: typeId, id: id, type: 'approval'} });
+      }
+
+      else if (state == '通知') {
+        this.$router.push({ path: "/noticeInfoDesign", query: { workTaskId:workTaskId, iNMId: typeId, state: 'commit'} });
       }
 
 

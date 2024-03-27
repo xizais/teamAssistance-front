@@ -68,16 +68,57 @@
                    <el-dropdown-item @click="deleteNotify(data.iNMId)">删除通知</el-dropdown-item>
                    <el-dropdown-item @click="managerConfigShow(data.iNMId)">发布配置</el-dropdown-item>
                    <el-dropdown-item @click="pubNotifyInfo(data.iNMId)" v-if="data.cNMState == '草稿'">发布通知</el-dropdown-item>
-                   <el-dropdown-item @click="(data.iNMId)" v-if="data.cNMState == '发布'">查看数据</el-dropdown-item>
+                   <el-dropdown-item @click="viewData(data.cNMTitle,data.iNMId)" v-if="data.cNMState == '发布'">查看数据</el-dropdown-item>
                  </el-dropdown-menu>
                </template>
              </el-dropdown>
-
            </div>
          </div>
        </template>
+        <div>
+          <el-dialog v-model="dialogTableVisible" :title="this.title+'数据详情'" width="800"
+                     style="border-radius: 6px;" top="3vh"
+          >
+            <div style="width: 380px;height: 40px;margin-left: 0px; float: left">
+              <el-input style="width: 300px;" v-model="searchInputDialog" placeholder="请输入筛选内容"></el-input>
+              <el-button class="container-button" type="primary" style="margin-left: 4px" @click="this.searchInputDialog=''">重置</el-button>
+            </div>
+            <div style="float: right">
+              <el-row>
+                <el-col :span="12" style="display: flex; flex-direction: column;">
+                  <div>总数：</div>
+                </el-col>
+                <el-col :span="12" style="display: flex; flex-direction: column;">
+                  <div>{{ this.allMount }}</div>
+                </el-col>
+                <el-col :span="12" style="display: flex; flex-direction: column;">
+                  <div>已确认：</div>
+                </el-col>
+                <el-col :span="12" style="display: flex; flex-direction: column;">
+                  <div>{{ this.doneAmont }}</div>
+                </el-col>
+              </el-row>
+            </div>
+            <el-table :data="filteredGridData"  height="70vh">
+              <el-table-column property="code" label="学号"  />
+              <el-table-column property="name" label="姓名" />
+              <el-table-column property="state" label="状态" />
+<!--              <el-table-column fixed="right" label="操作" width="120">-->
+<!--                <template #default="scope">-->
+<!--                  <el-button-->
+<!--                      link-->
+<!--                      type="primary"-->
+<!--                      size="small"-->
+<!--                      @click.prevent="deleteRow(scope.$index)"-->
+<!--                  >-->
+<!--                    提醒-->
+<!--                  </el-button>-->
+<!--                </template>-->
+<!--              </el-table-column>-->
+            </el-table>
+          </el-dialog>
+        </div>
       </div>
-
       <div v-show="show">
         <el-empty description="无数据" />
       </div>
@@ -86,14 +127,21 @@
 </template>
 
 <script>
-import {deleteNotifyInfo, getNotifyInfoList, pubNotify} from "@/request";
+import {deleteNotifyInfo, getNotifyInfoList, getNotifyPersonDataList, pubNotify} from "@/request";
 import {ElMessage} from "element-plus";
 export default {
   name: "NoticeHome",
   data() {
     return {
+      dialogTableVisible: false,
+      title: '',
+
       searchInput: '',
+      searchInputDialog: '',
+      doneAmont: 0,
+      allMount: 0,
       dataArray: [],
+      gridData : []
     };
   },
 
@@ -116,7 +164,17 @@ export default {
               || item?.cNMState?.includes(this.searchInput)
               ;
         });
-    }
+      },
+      filteredGridData() {
+        // 使用筛选条件过滤数组对象
+        return this.gridData.filter(item => {
+          return item?.code?.includes(this.searchInputDialog)
+              || item?.name?.includes(this.searchInputDialog)
+              || item?.state?.includes(this.searchInputDialog)
+              ;
+        });
+      }
+
 
   },
   methods: {
@@ -172,6 +230,27 @@ export default {
       ElMessage.success(result.data.message);
       this.initInfoData();
     },
+
+    async viewData(title,iNMId){
+      this.dialogTableVisible = true;
+      this.title = title;
+      // 获取数据
+      const requestData = {
+        typeId: iNMId,
+      }
+      const result = await getNotifyPersonDataList(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      this.gridData = result.data.notifyPersonData;
+      this.doneAmont = result.data.doneAmont;
+      this.allMount = this.gridData.length;
+    }
   }
 }
 </script>

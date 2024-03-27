@@ -25,6 +25,7 @@ export const deleteNotifyInfo = (data) => requests({ url: '/api/NoticeManager/de
 export const getNotifyInfoList = (data) => requests({ url: '/api/NoticeManager/getNotifyInfoList',method: 'post', data });// 获取信息展示列表
 export const getNotifyInfo = (data) => requests({ url: '/api/NoticeManager/getNotifyInfo',method: 'post', data });// 获取信息
 export const pubNotify = (data) => requests({ url: '/api/NoticeManager/pubNotify',method: 'post', data });// 发布通知
+export const getNotifyPersonDataList = (data) => requests({ url: '/api/NoticeManager/getNotifyPersonDataList',method: 'post', data });// 获取用户详情信息
 
 // 任务管理处理
 

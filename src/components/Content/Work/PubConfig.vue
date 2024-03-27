@@ -39,6 +39,7 @@
           v-model="dialogVisible"
           @close="closePersonDialog"
           :draggable="true"
+          top="3vh"
       >
         <el-input
             v-model="filterKeyword"
