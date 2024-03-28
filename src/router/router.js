@@ -56,6 +56,12 @@ const routes = [
     { path: '/CollectInfoShow', component: CollectInfoShow },
     { path: '/CollectInfoDataDetails', component: CollectInfoDataDetails },
     { path: '/PubConfig', component: PubConfig },
+    //  任务数据
+    {
+        path: '/taskDataShow',
+        component: () =>
+            import ('@/components/Content/Work/Task/TaskDataShow.vue')
+    },
     // 通知创建
     {
         path: '/noticeInfoDesign',

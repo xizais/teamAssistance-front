@@ -28,6 +28,12 @@ export const pubNotify = (data) => requests({ url: '/api/NoticeManager/pubNotify
 export const getNotifyPersonDataList = (data) => requests({ url: '/api/NoticeManager/getNotifyPersonDataList',method: 'post', data });// 获取用户详情信息
 
 // 任务管理处理
+export const saveTask = (data) => requests({ url: '/api/TaskManager/saveTask',method: 'post', data });// 保存任务管理信息
+export const getTaskInfoList = (data) => requests({ url: '/api/TaskManager/getTaskInfoList',method: 'post', data });// 保存任务管理信息
+export const getTaskInfo = (data) => requests({ url: '/api/TaskManager/getTaskInfo',method: 'post', data });// 保存任务管理信息
+export const deleteTask = (data) => requests({ url: '/api/TaskManager/deleteTask',method: 'post', data });// 删除任务管理信息
+export const pubTask = (data) => requests({ url: '/api/TaskManager/pubTask',method: 'post', data });// 发布任务管理信息
+
 
 
 // 发布配置处理

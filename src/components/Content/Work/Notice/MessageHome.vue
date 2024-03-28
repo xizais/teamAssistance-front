@@ -75,49 +75,49 @@
            </div>
          </div>
        </template>
-        <div>
-          <el-dialog v-model="dialogTableVisible" :title="this.title+'数据详情'" width="800"
-                     style="border-radius: 6px;" top="3vh"
-          >
-            <div style="width: 380px;height: 40px;margin-left: 0px; float: left">
-              <el-input style="width: 300px;" v-model="searchInputDialog" placeholder="请输入筛选内容"></el-input>
-              <el-button class="container-button" type="primary" style="margin-left: 4px" @click="this.searchInputDialog=''">重置</el-button>
-            </div>
-            <div style="float: right">
-              <el-row>
-                <el-col :span="12" style="display: flex; flex-direction: column;">
-                  <div>总数：</div>
-                </el-col>
-                <el-col :span="12" style="display: flex; flex-direction: column;">
-                  <div>{{ this.allMount }}</div>
-                </el-col>
-                <el-col :span="12" style="display: flex; flex-direction: column;">
-                  <div>已确认：</div>
-                </el-col>
-                <el-col :span="12" style="display: flex; flex-direction: column;">
-                  <div>{{ this.doneAmont }}</div>
-                </el-col>
-              </el-row>
-            </div>
-            <el-table :data="filteredGridData"  height="70vh">
-              <el-table-column property="code" label="学号"  />
-              <el-table-column property="name" label="姓名" />
-              <el-table-column property="state" label="状态" />
-<!--              <el-table-column fixed="right" label="操作" width="120">-->
-<!--                <template #default="scope">-->
-<!--                  <el-button-->
-<!--                      link-->
-<!--                      type="primary"-->
-<!--                      size="small"-->
-<!--                      @click.prevent="deleteRow(scope.$index)"-->
-<!--                  >-->
-<!--                    提醒-->
-<!--                  </el-button>-->
-<!--                </template>-->
-<!--              </el-table-column>-->
-            </el-table>
-          </el-dialog>
-        </div>
+      </div>
+      <div>
+        <el-dialog v-model="dialogTableVisible" :title="this.title+'数据详情'" width="800"
+                   style="border-radius: 6px;" top="3vh"
+        >
+          <div style="width: 380px;height: 40px;margin-left: 0px; float: left">
+            <el-input style="width: 300px;" v-model="searchInputDialog" placeholder="请输入筛选内容"></el-input>
+            <el-button class="container-button" type="primary" style="margin-left: 4px" @click="this.searchInputDialog=''">重置</el-button>
+          </div>
+          <div style="float: right">
+            <el-row>
+              <el-col :span="12" style="display: flex; flex-direction: column;">
+                <div>总数：</div>
+              </el-col>
+              <el-col :span="12" style="display: flex; flex-direction: column;">
+                <div>{{ this.allMount }}</div>
+              </el-col>
+              <el-col :span="12" style="display: flex; flex-direction: column;">
+                <div>已确认：</div>
+              </el-col>
+              <el-col :span="12" style="display: flex; flex-direction: column;">
+                <div>{{ this.doneAmont }}</div>
+              </el-col>
+            </el-row>
+          </div>
+          <el-table :data="filteredGridData"  height="70vh">
+            <el-table-column property="code" label="学号"  />
+            <el-table-column property="name" label="姓名" />
+            <el-table-column property="state" label="状态" />
+            <!--              <el-table-column fixed="right" label="操作" width="120">-->
+            <!--                <template #default="scope">-->
+            <!--                  <el-button-->
+            <!--                      link-->
+            <!--                      type="primary"-->
+            <!--                      size="small"-->
+            <!--                      @click.prevent="deleteRow(scope.$index)"-->
+            <!--                  >-->
+            <!--                    提醒-->
+            <!--                  </el-button>-->
+            <!--                </template>-->
+            <!--              </el-table-column>-->
+          </el-table>
+        </el-dialog>
       </div>
       <div v-show="show">
         <el-empty description="无数据" />

@@ -5,8 +5,12 @@
         <el-icon><ArrowLeftBold /></el-icon>
       </el-button>
       <span class="title">任务发布表单设计</span>
-      <el-button class="nav-button" @click="resetForm" :disabled="isSave">重置</el-button>
-      <el-button class="nav-button" @click="saveForm" :disabled="isSave">保存</el-button>
+      <template v-if="!isView">
+        <el-button class="nav-button" @click="resetForm" v-if="!isSave&&!isEdit">重置</el-button>
+        <el-button class="nav-button" @click="saveForm" v-if="!isSave">保存</el-button>
+        <el-button class="nav-button" @click="goBack" v-if="isSave&&isEdit">关闭</el-button>
+        <el-button class="nav-button" style="background-color: #f8b78d" @click="deleteTask" v-if="isEdit">删除</el-button>
+      </template>
     </div>
     <div class="detail">
       <div class="detail-item">
@@ -67,23 +71,58 @@
   </template>
 
   <script>
+  import {ElMessage} from "element-plus";
+  import {deleteTask, getTaskInfo, saveTask} from "@/request";
+
   export default {
   name:'MessageInfoDesign',
   data(){
       return{
-        taskTitle:'',
-        taskContent:'',
-        taskRequire:'',
+        iTMId: 0,
+
+        taskTitle:null,
+        taskContent:null,
+        taskRequire:null,
         fileList:[
         {
           name: 'food.jpeg',
           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
         },
         ],
-        isSave:false,  //是否保存
+        isSave: true,  //是否已经保存
+        isView: true,
+        isEdit: false,
       }
   },
-  computed:{
+    mounted() {
+      this.state = this.$route.query.state;
+
+      if (this.state == 'view') {
+        this.isView = true;
+        this.isSave = true;
+        this.iTMId = this.$route.query.iTMId;
+      }
+      if (this.state == 'edit') {
+        this.isView = false;
+        this.isSave = false;
+        this.isEdit = true;
+        this.iTMId = this.$route.query.iTMId;
+      }
+      if (this.state == 'add') {
+        this.isView = false;
+        this.isSave = false;
+      }
+      if (this.state == 'doTask') {
+
+        this.iTMId = this.$route.query.iTMId;
+      }
+
+      if (this.iTMId != 0) {
+        // 初始化数据
+        this.initInfoData();
+      }
+    },
+    computed:{
     text(){
       const text = this.isSave ? '' : '请输入内容'
       return text;
@@ -93,15 +132,71 @@
       goBack(){
           this.$router.push('/taskHome');
       },
+
       // 保存表单
-      saveForm(){
+      async saveForm(){
+        const requestData = {
+          taskTitle: this.taskTitle,
+          taskContent: this.taskContent,
+          taskRequire: this.taskRequire,
+        };
+        const result = await saveTask(requestData);
+        if (result == null || result == undefined){
+          ElMessage.error("操作失败！");
+          return;
+        }
+        if (result.code != 0) {
+          ElMessage.error(result.message);
+          return;
+        }
+        ElMessage.success(result.data.message);
         this.isSave = true;
       },
+
+      // 获取表单数据
+      async initInfoData(){
+        if (this.iTMId == 0) {
+          return;
+        }
+        const requestData = {
+          iTMId: this.iTMId
+        };
+        const result = await getTaskInfo(requestData);
+        if (result == null || result == undefined) {
+          ElMessage.error("操作失败！")
+          return;
+        }
+        if (result.code != 0) {
+          ElMessage.error(result.message);
+          return;
+        }
+        this.taskTitle = result.data.cTMTitle;
+        this.taskContent = result.data.cTMContent;
+        this.taskRequire = result.data.cTMRequest;
+
+      },
+    async deleteTask(){
+      const requestData = {
+        iTMId: this.iTMId
+      }
+      const result = await deleteTask(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error("操作失败！");
+        return;
+      }
+      ElMessage.success(result.data.message);
+      this.goBack();
+    },
+
       // 清空表单
       resetForm(){
-        this.taskContent = '';
-        this.taskTitle = '';
-        this.taskRequire = '';
+        this.taskContent = null;
+        this.taskTitle = null;
+        this.taskRequire = null;
       }
   }
   }
