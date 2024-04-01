@@ -96,8 +96,8 @@ export default {
           child:[
             {
               id:'3-1',
-              name:'我的组织信息',
-              path:'/collectInfo'
+              name:'组织信息',
+              path:'/OrgHome'
             },
             {
               id: '3-2',

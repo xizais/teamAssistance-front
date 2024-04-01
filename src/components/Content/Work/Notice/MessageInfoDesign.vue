@@ -58,11 +58,16 @@
       <el-button class="nav-button" @click="commitInfo" v-if="isCommit">确认通知</el-button>
     </div>
   </div>
-  
+
+
+  <div>
+    <input type="file" ref="fileInput" @change="handleFileChange" />
+    <button @click="uploadFile">上传</button>
+  </div>
 </template>
 
 <script>
-import {saveNoticeManager, deleteNotifyInfo, handleWorkTask, getNotifyInfo} from "@/request";
+import {saveNoticeManager, deleteNotifyInfo, handleWorkTask, getNotifyInfo, uploadFile} from "@/request";
 import {ElMessage} from "element-plus";
 
 export default {
@@ -75,11 +80,13 @@ data(){
       noticeContent:'',
       taskRequire:'',
       fileList:[
-      {
-        name: 'food.jpeg',
-        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-      },
+        {
+          name: 'food.jpeg',
+          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+        },
       ],
+      selectedFile: null,
+
       isSave:false,  //是否保存
       isCommit:false,  //是否确认通知
       isView:false,  //是否浏览
@@ -113,6 +120,18 @@ data(){
   }
 },
 methods:{
+  handleFileChange(event) {
+    this.selectedFile = event.target.files[0];
+  },
+  async uploadFile() {
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+    console.log(this.selectedFile)
+    const result = await uploadFile(formData);
+    console.log(result);
+
+  },
+
     async getNotifyInfo(){
       if (this.iNMId == 0) {
         return;

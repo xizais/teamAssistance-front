@@ -98,7 +98,7 @@ import {
 } from "@/request";
 
 export default {
-  name: "CollectInfoData",
+  name: "TaskDataShow",
   setup() {
     //人员选择
     let persons = ref([]);

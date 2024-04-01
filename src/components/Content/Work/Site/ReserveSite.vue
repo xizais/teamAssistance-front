@@ -173,7 +173,7 @@ export default {
 
 .td .site-time{
   float: left;
-  width: 340px;
+  width: 300px;
 }
 
 </style>

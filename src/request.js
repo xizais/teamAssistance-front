@@ -1,4 +1,5 @@
 import requests from "../src/api"
+import fileRequests from "@/fileApi";
 
 // 用户处理
 export const userLogin = (data) => requests({ url: '/api/User/login',method: 'post', data });// 用户登入
@@ -50,7 +51,7 @@ export const deleteWorkTask = (data) => requests({ url: '/api/WorkTask/deleteWor
 
 
 // 文件处理
-export const uploadFile = (data) => requests({ url: '/api/File/uploadFile',method: 'post', data });// 上传文件
+export const uploadFile = (data) => fileRequests({ url: '/api/File/uploadFile',method: 'post', data });// 上传文件
 
 //场地管理
 export const addArea = (data) => requests({ url: '/api/Area/addAreaInfo',method: 'post', data });//新增场地

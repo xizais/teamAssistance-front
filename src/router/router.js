@@ -91,6 +91,12 @@ const routes = [
         path: '/reserveSite',
         component: () =>
             import ('@/components/Content/Work/Site/ReserveSite')
+    },
+    //组织新增
+    {
+        path: '/organizeInfo',
+        component: () =>
+            import ('@/components/Content/Organization/OrganizeInfo')
     }
 ];
 
