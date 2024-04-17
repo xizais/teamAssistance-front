@@ -205,6 +205,15 @@ export default {
       else if (state == '通知') {
         this.$router.push({ path: "/noticeInfoDesign", query: { iNMId: typeId, state: 'view'} });
       }
+
+      else if (state == '任务') {
+        this.$router.push({ path: "/taskInfoDesign", query: { workTaskId:workTaskId, iTMId:typeId, state: 'doTaskView' } });
+      }
+
+      else if (state == '任务审批') {
+        this.$router.push({ path: "/taskInfoDesign", query: { workTaskId:workTaskId, iTMId:typeId, state: 'approvalView' } });
+      }
+
     },
 
     async goToHandle(workTaskId,state,typeId) {
@@ -221,8 +230,6 @@ export default {
         }
         const id = result.data.id;// 当前人员对应的表单的信息收集记录
         this.$router.push({ path: "/CollectInfoDataDetails", query: { iIFId: typeId,id: id, workTaskId: workTaskId, type: 'edit'} });
-
-
       }
 
       else if (state == '信息收集审批') {
@@ -244,6 +251,14 @@ export default {
 
       else if (state == '通知') {
         this.$router.push({ path: "/noticeInfoDesign", query: { workTaskId:workTaskId, iNMId: typeId, state: 'commit'} });
+      }
+
+      else if (state == '任务') {
+        this.$router.push({ path: "/taskInfoDesign", query: {workTaskId: workTaskId, iTMId:typeId, state: 'doTask' } });
+      }
+
+      else if (state == '任务审批') {
+        this.$router.push({ path: "/taskInfoDesign", query: {workTaskId: workTaskId, iTMId:typeId, state: 'approval' } });
       }
 
 

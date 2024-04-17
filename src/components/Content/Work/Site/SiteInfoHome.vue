@@ -56,7 +56,7 @@
               v-model:page-size="selectPage.pageSize"
               small="small"
               layout="total, prev, pager, next, jumper"
-              :total="selectPage.total"
+              :total="amount"
               @current-change="handleCurrentChange"
           />
         </div>
@@ -96,10 +96,11 @@ import SearchPage from "@/components/Content/Work/SearchPage";
 import {ElMessage} from "element-plus";
 import {addAreaBook, getAreaList} from "@/request";
 export default {
-  name: "CollectInfoHome",
+  name: "SiteInfoHome",
   components: {SearchPage},
   data() {
     return {
+      amount: 0,
       selectPage: {
         currentPage: 1,
         pageSize: 10,
@@ -122,10 +123,10 @@ export default {
   },
   computed:{
     show(){
-      return this.dataList.length? true : false;
+      return this.dataList?.length? true : false;
     },
     dataList(){
-      return this.dataArray.filter(item=>{
+      return this.dataArray?.filter(item=>{
         return item.bAIIsEnable == true;
       })
     }
@@ -138,11 +139,52 @@ export default {
       this.$router.push({ path: "/reserveSite" });
     },
     async getdataList(){
-      let result = await getAreaList({});
-      if(result && result.code == 0){
-        this.dataArray = result.data.infoList;
+      const requestData = {
+        pageData: this.selectPage,
+      };
+      let result = await getAreaList(requestData);
+      if (result == null || result ==undefined) {
+        ElMessage.error("操作失败！");
+        return;
       }
+      if (result.code != 0 ){
+        ElMessage.error(result.message);
+        return;
+      }
+      this.dataArray = result.data.infoList;
+      this.amount = result.data.amount;
     },
+
+    async handleCurrentChange(newPage) {
+      // 处理当前页码改变事件
+      this.selectPage.currentPage = newPage;
+      this.selectPage.offset = this.selectPage.pageSize * (newPage-1);
+      // 重新加载数据
+      let requestData = {
+        searchData: this.searchData,
+        pageData: this.selectPage,
+      };
+      let result = await getAreaList(requestData);
+      this.dataArray = result.data?.infoList;
+      this.amount = result.data?.amount;
+    },
+
+    // 搜索
+    async searchInfo(searchData){
+      this.searchData = searchData;
+      const requestData = {
+        searchData: searchData,
+        pageData: this.selectPage,
+      };
+      let result = await getAreaList(requestData);
+      if (result != null && result.code != 0 ){
+        ElMessage.error(result.message);
+        return;
+      }
+      this.dataArray = result.data?.infoList;
+      this.amount = result.data?.amount;
+    },
+
     goReserve(value){
       this.showDialog = true;
       this.targetItem = value;

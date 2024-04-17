@@ -61,13 +61,13 @@
                  操作
                  <template #dropdown>
                    <el-dropdown-menu>
-                     <el-dropdown-item @click="goToShow(data.iTMId)">查看表单</el-dropdown-item>
+                     <el-dropdown-item @click="goToShow(data.iTMId)">查看任务</el-dropdown-item>
                      <el-dropdown-item @click="managerConfigShow(data.iTMId)">发布配置</el-dropdown-item>
                      <el-dropdown-item @click="goToDataShow(data.iTMId,data.cIFTitle,data.cTMState)" v-if="(data.cTMState == '发布' || data.cTMState == '停止')">查看数据</el-dropdown-item>
                      <el-dropdown-item @click="publishForm(data.iTMId)" v-if="data.cTMState != '发布'">发布任务</el-dropdown-item>
                      <el-dropdown-item @click="editPage(data.iTMId)" v-if="data.cTMState == '发布'">结束任务</el-dropdown-item>
-                     <el-dropdown-item @click="goToEditPage(data.iTMId)" v-if="data.cTMState != '发布'">编辑表单</el-dropdown-item>
-                     <el-dropdown-item @click="deleteTask(data.iTMId)" v-if="data.cTMState != '发布'">删除表单</el-dropdown-item>
+                     <el-dropdown-item @click="goToEditPage(data.iTMId)" v-if="data.cTMState != '发布'">编辑任务</el-dropdown-item>
+                     <el-dropdown-item @click="deleteTask(data.iTMId)" v-if="data.cTMState != '发布'">删除任务</el-dropdown-item>
                    </el-dropdown-menu>
                  </template>
                </el-dropdown>
@@ -203,7 +203,7 @@
           return;
         }
         if (result.code != 0) {
-          ElMessage.error("操作失败！");
+          ElMessage.error(result.message);
           return;
         }
         ElMessage.success(result.data.message);

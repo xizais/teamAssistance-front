@@ -13,7 +13,7 @@
       <el-form-item label="是否进行审核" v-if="!isNotify">
         <el-switch v-model="form.reviewEnabled" :disabled="isReadOnly"></el-switch>
       </el-form-item>
-      <el-form-item label="是否启用组织管理" v-if="!isNotify">
+      <el-form-item label="是否组织管理" v-if="!isNotify && form.reviewEnabled">
         <el-switch v-model="form.orgEnabled" :disabled="isReadOnly"></el-switch>
       </el-form-item>
       <el-form-item label="发布者名称">

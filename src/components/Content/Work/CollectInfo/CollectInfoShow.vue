@@ -5,15 +5,15 @@
       <el-icon><ArrowLeftBold /></el-icon>
     </el-button>
     <span class="title">{{ title }}</span>
-    <el-dropdown split-button >
-      操作
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item @click="saveData()">暂存</el-dropdown-item>
-          <el-dropdown-item @click="submit()">提交</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
+<!--    <el-dropdown split-button >-->
+<!--      操作-->
+<!--      <template #dropdown>-->
+<!--        <el-dropdown-menu>-->
+<!--          <el-dropdown-item @click="saveData()">暂存</el-dropdown-item>-->
+<!--          <el-dropdown-item @click="submit()">提交</el-dropdown-item>-->
+<!--        </el-dropdown-menu>-->
+<!--      </template>-->
+<!--    </el-dropdown>-->
   </div>
   <div class="content">
     <!-- 内容 -->
@@ -164,31 +164,6 @@
       </div>
     </div>
   </div>
-  <template v-if="this.authority">
-    <div class="config">
-      <div class="config-title">
-        表单配置信息
-      </div>
-      <div class="config-content">
-        是否开始发布
-        发布起始时间
-        发布者身份
-        发布对象
-        发布组织
-      </div>
-    </div>
-  </template>
-  <template v-if="this.authority">
-    <div class="config">
-      <div class="config-title">
-        表单数据信息
-      </div>
-      <div class="config-content">
-        数据分类：按组织分类、不分类
-        数据显示：分页，表格展示
-      </div>
-    </div>
-  </template>
 </template>
 
 <script>

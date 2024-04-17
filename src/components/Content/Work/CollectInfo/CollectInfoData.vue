@@ -310,13 +310,14 @@ export default {
     },
 
     ViewData(data) {
-      this.$router.push({ path: "/CollectInfoDataDetails", query: { iIFId: this.iIFId, id: data.id, type: 'view'} });
+      this.$router.push({ path: "/CollectInfoDataDetails", query: { iIFId: this.iIFId, id: data.id, type: 'view', workTaskId: data.workTaskId} });
     },
 
     ApprovalData(data) {
       this.$router.push({ path: "/CollectInfoDataDetails", query: { iIFId: this.iIFId, id: data.id,
           code: data.code, name: data.name, type: 'approval',
           title: this.cIFTitle,
+          workTaskId: data.workTaskId
       } });
     },
 

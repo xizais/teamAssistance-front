@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const fileRequests = axios.create({
     // baseURL: '',
-    timeout: 5000,
+    timeout: 10000,
     withCredentials: true // 允许跨域请求带上cookie
 })
 

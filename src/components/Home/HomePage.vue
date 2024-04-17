@@ -39,21 +39,21 @@ export default {
           id:1,
           name:'消息',
           child:[
-            {
-              id:'1-1',
-              name:'工作信息',
-              path:'/collectInfo'
-            },
-            {
-              id:'1-2',
-              name:'通知信息',
-              path:'/collectInfo'
-            },
-            {
-              id:'1-3',
-              name:'组织信息',
-              path:'/collectInfo'
-            },
+            // {
+            //   id:'1-1',
+            //   name:'工作信息',
+            //   path:'/collectInfo'
+            // },
+            // {
+            //   id:'1-2',
+            //   name:'通知信息',
+            //   path:'/collectInfo'
+            // },
+            // {
+            //   id:'1-3',
+            //   name:'组织信息',
+            //   path:'/collectInfo'
+            // },
             {
               id:'1-4',
               name:'聊天',
@@ -99,11 +99,26 @@ export default {
               name:'组织信息',
               path:'/OrgHome'
             },
+            // {
+            //   id: '3-2',
+            //   name: '权限分配',
+            //   path: '/collectInfo'
+            // }
+          ]},
+        {
+          id:4,
+          name:'个人',
+          child:[
             {
-              id: '3-2',
-              name: '权限分配',
-              path: '/collectInfo'
-            }
+              id:'4-1',
+              name:'登出',
+              path:'/outLogin'
+            },
+            // {
+            //   id: '3-2',
+            //   name: '权限分配',
+            //   path: '/collectInfo'
+            // }
           ]},
       ],
       

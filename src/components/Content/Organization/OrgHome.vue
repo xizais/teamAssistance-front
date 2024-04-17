@@ -6,20 +6,20 @@
           <el-input style="width: 300px;" v-model="searchInput" placeholder="请输入筛选内容"></el-input>
           <el-button class="container-button" type="primary" style="margin-left: 4px" @click="this.searchInput=''">重置</el-button>
         </div>
-        <el-button class="collect-button" @click="goToOrgCreate()">组织创建</el-button>
+        <el-button class="collect-button" style="margin-left: 600px" @click="personManager()" v-if="isSysManager">组织人员管理</el-button>
       </div>
       <div style="width: 200px;height: 50px;margin-left: 10px">
         <div style="width: 88px;height: 40px;float: left ">
-          <el-button type="primary" @click="goToOrgCreate()">我的组织</el-button>
+          <el-button :type="curTargetMy?'primary':'null'" @click="myOrgList(true)">我的组织</el-button>
         </div>
         <div style="width: 98px;height: 40px;float: left ">
-          <el-button  @click="goToOrgCreate()">公共组织</el-button>
+          <el-button :type="!curTargetMy?'primary':'null'" @click="myOrgList(false)">公共组织</el-button>
         </div>
       </div>
       <div class="wrapper">
         <template
             v-for="(data,index) in filteredArray"
-            :key="data.iNMId"
+            :key="data.cOICode"
         >
           <template v-if="index===0">
             <div class="container" style="font-weight: bolder; font-size: 18px">
@@ -44,13 +44,13 @@
           <div class="container">
             <div class="left">
               <div class="left-title">
-                <span class="left-fontStyle">{{ data.cNMTitle }}</span>
+                <span class="left-fontStyle">{{ data.cOIOrgCode }}</span>
               </div>
               <div class="left-creator">
-                <span class="left-fontStyle">{{ data.dNMUpdateTime }}</span>
+                <span class="left-fontStyle">{{ data.cOIOrgName }}</span>
               </div>
               <div class="left-creator">
-                <span class="left-fontStyle">{{ data.cNMPubName }}</span>
+                <span class="left-fontStyle">{{ data.cOIManagerCode }}</span>
               </div>
             </div>
             <div class="right">
@@ -58,11 +58,13 @@
                 操作
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="goToShow(data.iNMId)">查看人员</el-dropdown-item>
-                    <el-dropdown-item @click="editNotify(data.iNMId)">查看子级</el-dropdown-item>
-                    <el-dropdown-item @click="deleteNotify(data.iNMId)">管理信息</el-dropdown-item>
-                    <el-dropdown-item @click="managerConfigShow(data.iNMId)">停用部门</el-dropdown-item>
-                    <el-dropdown-item @click="pubNotifyInfo(data.iNMId)">删除通知</el-dropdown-item>
+                    <el-dropdown-item @click="goToShow(data.cOICode)" v-if="curTargetMy">查看人员</el-dropdown-item>
+                    <el-dropdown-item @click="goToChild(data.cOICode)">查看子级</el-dropdown-item>
+                    <el-dropdown-item @click="outOrgPerOnly(data.cOICode)" v-if="curTargetMy">退出组织</el-dropdown-item>
+                    <el-dropdown-item @click="managerOrg(data.cOICode)">管理信息</el-dropdown-item>
+                    <el-dropdown-item @click="goToOrgCreate(data.cOICode)" v-if="curTargetMy">创建组织</el-dropdown-item>
+                    <el-dropdown-item @click="changeOrgState(data.cOICode,true)">停用部门</el-dropdown-item>
+                    <el-dropdown-item @click="changeOrgState(data.cOICode,false)">启用部门</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -70,49 +72,98 @@
           </div>
         </template>
       </div>
+
       <div>
-        <el-dialog v-model="dialogTableVisible" :title="this.title+'数据详情'" width="800"
-                   style="border-radius: 6px;" top="3vh"
+        <el-dialog
+            class="dialog-style"
+            :title="'组织人员信息（总数：'+ this.curAmount +'）'"
+            v-model="dialogVisible"
+            @close="dialogVisible = false"
+            :draggable="true"
         >
-          <div style="width: 380px;height: 40px;margin-left: 0px; float: left">
-            <el-input style="width: 300px;" v-model="searchInputDialog" placeholder="请输入筛选内容"></el-input>
-            <el-button class="container-button" type="primary" style="margin-left: 4px" @click="this.searchInputDialog=''">重置</el-button>
+          <div style="display: flex; align-items: center;">
+            <el-input
+                v-model="filterPerOrgKey"
+                placeholder="请输入关键字进行筛选"
+                style="margin-right: 10px;"
+            ></el-input>
+            <el-button type="primary" @click="addOrgPer(curOrgCode)">新增用户</el-button>
           </div>
-          <div style="float: right">
-            <el-row>
-              <el-col :span="12" style="display: flex; flex-direction: column;">
-                <div>总数：</div>
-              </el-col>
-              <el-col :span="12" style="display: flex; flex-direction: column;">
-                <div>{{ this.allMount }}</div>
-              </el-col>
-              <el-col :span="12" style="display: flex; flex-direction: column;">
-                <div>已确认：</div>
-              </el-col>
-              <el-col :span="12" style="display: flex; flex-direction: column;">
-                <div>{{ this.doneAmont }}</div>
-              </el-col>
-            </el-row>
-          </div>
-          <el-table :data="filteredGridData"  height="70vh">
-            <el-table-column property="code" label="学号"  />
-            <el-table-column property="name" label="姓名" />
-            <el-table-column property="state" label="状态" />
-            <!--              <el-table-column fixed="right" label="操作" width="120">-->
-            <!--                <template #default="scope">-->
-            <!--                  <el-button-->
-            <!--                      link-->
-            <!--                      type="primary"-->
-            <!--                      size="small"-->
-            <!--                      @click.prevent="deleteRow(scope.$index)"-->
-            <!--                  >-->
-            <!--                    提醒-->
-            <!--                  </el-button>-->
-            <!--                </template>-->
-            <!--              </el-table-column>-->
+          <el-table
+              :data="filterPerArray"
+              stripe
+              style="max-height: 400px; overflow-y: auto;width: 800px"
+          >
+            <el-table-column prop="cPIName" label="人员编号"></el-table-column>
+            <el-table-column prop="cPICode" label="人员名称"></el-table-column>
+            <el-table-column prop="cOIOrgName" label="人员所属"></el-table-column>
+            <el-table-column label="操作">
+              <template v-slot="{ row }">
+                <el-button type="primary" @click="outOrgPer(row.cPICode,curOrgCode)" >剔除</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </el-dialog>
       </div>
+
+      <div>
+        <el-dialog
+            class="dialog-style"
+            title="组织人员新增"
+            v-model="myPerVisable"
+            @close="myPerVisable = false"
+            :draggable="true"
+        >
+          <div style="display: flex; align-items: center;">
+            <el-input
+                v-model="filterMyPerKey"
+                placeholder="请输入关键字进行筛选"
+                style="margin-right: 10px;"
+            ></el-input>
+          </div>
+          <el-table
+              :data="filterMyPerArray"
+              stripe
+              style="max-height: 400px; overflow-y: auto;width: 800px"
+          >
+            <el-table-column prop="cPICode" label="人员编号"></el-table-column>
+            <el-table-column prop="cPIName" label="人员名称"></el-table-column>
+            <el-table-column label="操作">
+              <template v-slot="{ row }">
+                <el-button type="primary" @click="addNewOrgPer(row.cPICode,curOrgCode)" >新增</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-dialog>
+      </div>
+
+      <div>
+        <el-dialog
+            class="dialog-style"
+            title="组织子级信息"
+            v-model="dialogVisibleOrg"
+            @close="dialogVisibleOrg = false"
+            :draggable="true"
+        >
+          <el-input
+              v-model="filterOrgKey"
+              placeholder="请输入关键字进行筛选"
+              style="margin-bottom: 10px;"
+          ></el-input>
+          <el-table
+              :data="filterOrgArray"
+              stripe
+              style="max-height: 600px; overflow-y: auto;"
+          >
+            <el-table-column prop="cOIOrgCode" label="组织编码"></el-table-column>
+            <el-table-column prop="cOIOrgName" label="组织名称"></el-table-column>
+            <el-table-column prop="bOIIsEnable" label="组织状态"></el-table-column>
+            <el-table-column prop="bOIIsPublicVisible" label="组织公示"></el-table-column>
+            <el-table-column prop="cOIManagerCode" label="组织负责人"></el-table-column>
+          </el-table>
+        </el-dialog>
+      </div>
+
       <div v-show="show">
         <el-empty description="无数据" />
       </div>
@@ -121,21 +172,43 @@
 </template>
 
 <script>
-import {deleteNotifyInfo, getNotifyInfoList, getNotifyPersonDataList, pubNotify} from "@/request";
+import {
+  addNewOrgPer,
+  deleteNotifyInfo,
+  getChildOrg, getCurPerInfo,
+  getMyPer,
+  getOrgList,
+  getOrgPers, outOrgPer,
+  pubNotify
+} from "@/request";
 import {ElMessage} from "element-plus";
 export default {
   name: "NoticeHome",
   data() {
     return {
+      isSysManager: true, // 是否系统人员
+      curOrgCode: null,// 当前组织
+      curAmount: 0,// 当前组织总人数
       dialogTableVisible: false,
       title: '',
-
+      curTargetMy: true,
       searchInput: '',
       searchInputDialog: '',
       doneAmont: 0,
       allMount: 0,
       dataArray: [],
-      gridData : []
+      perArray: [],
+
+      dialogVisible: false,
+      filterPerOrgKey: '',
+
+      dialogVisibleOrg: false,
+      filterOrgKey: '',
+      orgArray: [],
+
+      myPerArray: [],
+      myPerVisable: false,
+      filterMyPerKey: '',
     };
   },
 
@@ -151,60 +224,157 @@ export default {
     filteredArray() {
       // 使用筛选条件过滤数组对象
       return this.dataArray?.filter(item => {
-        return item?.cNMTitle?.includes(this.searchInput)
-            || item?.dNMUpdateTime?.includes(this.searchInput)
-            || item?.cNMPubName?.includes(this.searchInput)
+        return item?.cOIOrgCode?.includes(this.searchInput)
+            || item?.cOIOrgName?.includes(this.searchInput)
+            || item?.cOIManagerCode?.includes(this.searchInput)
             ;
       });
     },
-    filteredGridData() {
+
+    filterPerArray() {
       // 使用筛选条件过滤数组对象
-      return this.gridData.filter(item => {
-        return item?.code?.includes(this.searchInputDialog)
-            || item?.name?.includes(this.searchInputDialog)
-            || item?.state?.includes(this.searchInputDialog)
+      return this.perArray?.filter(item => {
+        return item?.cPIName?.includes(this.filterPerOrgKey)
+            || item?.cPICode?.includes(this.filterPerOrgKey)
             ;
       });
-    }
+    },
 
+    filterMyPerArray() {
+      // 使用筛选条件过滤数组对象
+      return this.myPerArray?.filter(item => {
+        return item?.cPIName?.includes(this.filterMyPerKey)
+            || item?.cPICode?.includes(this.filterMyPerKey)
+            ;
+      });
+    },
 
+    filterOrgArray() {
+      // 使用筛选条件过滤数组对象
+      return this.orgArray?.filter(item => {
+        return item?.cOIOrgCode?.includes(this.filterOrgKey)
+            || item?.cOIOrgName?.includes(this.filterOrgKey)
+            || item?.bOIIsEnable?.includes(this.filterOrgKey)
+            || item?.bOIIsPublicVisible?.includes(this.filterOrgKey)
+            ;
+      });
+    },
   },
   methods: {
-    async initInfoData() {
-      let result = await getNotifyInfoList();
-      this.dataArray = result.data?.infoList;
-      this.dataArray =[
-        {
-          cNMTitle: '20154921',
-          dNMUpdateTime: '20软工一班',
-          cNMPubName: '希仔',
-        },
-        {
-          cNMTitle: '2015492',
-          dNMUpdateTime: '20软工二班',
-          cNMPubName: '希仔',
-        },
-        {
-          cNMTitle: '2015493',
-          dNMUpdateTime: '20软工三班',
-          cNMPubName: '希仔',
-        },
-        {
-          cNMTitle: '2015494',
-          dNMUpdateTime: '20软工四班',
-          cNMPubName: '李阳',
-        },
-      ];
+    initInfoData() {
+      this.myOrgList(true);
     },
 
-    goToOrgCreate() {
-      this.$router.push({ path: "/organizeInfo", query: { state: 'add' } });
+    async myOrgList(isMyOrg){
+      this.curTargetMy = isMyOrg;
+      const requestData = {
+        isMyOrg: isMyOrg
+      }
+      const result = await getOrgList(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("数据获取失败！");
+        return;
+      }
+      if (result.code !=0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      this.dataArray = result.data?.orgList;
     },
-    goToShow(iNMId) {
-      this.$router.push({ path: "/noticeInfoDesign", query: { state: 'view',iNMId: iNMId } });
+
+    goToOrgCreate(cOICode) {
+      this.$router.push({ path: "/organizeInfo", query: { state: 'add',cOICode: cOICode } });
     },
-    editNotify(iNMId) {
-      this.$router.push({ path: "/noticeInfoDesign", query: { state: 'edit',iNMId: iNMId } });
+
+    // 组织人员管理
+    personManager() {
+      this.$router.push({ path: "/sysOrgPerManager"});
+    },
+
+    // 查看组织人员信息
+    async goToShow(cOICode) {
+      this.curOrgCode = cOICode;
+      const requestData = {
+        cOICode: cOICode
+      }
+      const result = await getOrgPers(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("输出查询失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      this.perArray = result.data.perArray;
+      this.curAmount = result.data.curAmount;
+      this.dialogVisible = true;
+    },
+
+    // 添加用户界面
+    async addOrgPer(){
+      const requestData = {
+        curOrgCode: this.curOrgCode,
+      }
+      const result = await getMyPer(requestData);
+      this.myPerArray = result.data.myPerArray;
+      this.myPerVisable = true;
+    },
+
+    // 退出组织
+    async outOrgPerOnly(curOrgCode) {
+      const curPerInfo = await getCurPerInfo();
+      this.outOrgPer(curPerInfo.data.code,curOrgCode);
+      this.myOrgList(this.curTargetMy);
+    },
+
+    // 剔除人员
+    async outOrgPer(curPerCode,curOrgCode){
+      const requestData = {
+        curPerCode: curPerCode,
+        curOrgCode: curOrgCode,
+      }
+      const result = await outOrgPer(requestData);
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      ElMessage.success(result.data.message);
+      this.perArray = this.perArray.filter(item => item.cPICode !== curPerCode);
+      this.curAmount--;
+    },
+
+    // 添加用户
+    async addNewOrgPer(curPerCode,curOrgCode){
+      const requestData = {
+        curPerCode: curPerCode,
+        curOrgCode: curOrgCode,
+      }
+      const result = await addNewOrgPer(requestData);
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      ElMessage.success(result.data.message);
+      this.myPerArray = this.myPerArray.filter(item => item.cPICode !== curPerCode);
+      await this.goToShow(this.curOrgCode);
+    },
+
+    async goToChild(cOICode) {
+      const requestData = {
+        cOICode: cOICode
+      }
+      const result = await getChildOrg(requestData);
+      if (result == null || result == undefined) {
+        ElMessage.error("输出查询失败！");
+        return;
+      }
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
+      this.orgArray = result.data?.orgArray;
+      this.dialogVisibleOrg = true;
     },
 
     async deleteNotify(iNMId){
@@ -244,27 +414,6 @@ export default {
       ElMessage.success(result.data.message);
       this.initInfoData();
     },
-
-    async viewData(title,iNMId){
-      this.dialogTableVisible = true;
-      this.title = title;
-      // 获取数据
-      const requestData = {
-        typeId: iNMId,
-      }
-      const result = await getNotifyPersonDataList(requestData);
-      if (result == null || result == undefined) {
-        ElMessage.error("操作失败！");
-        return;
-      }
-      if (result.code != 0) {
-        ElMessage.error(result.message);
-        return;
-      }
-      this.gridData = result.data.notifyPersonData;
-      this.doneAmont = result.data.doneAmont;
-      this.allMount = this.gridData.length;
-    }
   }
 }
 </script>

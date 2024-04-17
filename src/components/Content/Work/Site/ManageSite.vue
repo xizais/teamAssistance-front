@@ -13,10 +13,10 @@
       </div>
       <el-button class="addBtn" type="primary" @click="addItem()">新增</el-button>
     </div>
-    <el-tooltip placement="top">
-      <template #content> multiple lines<br />second line </template>
-      <div>Top center</div>
-    </el-tooltip>
+<!--    <el-tooltip placement="top">-->
+<!--      <template #content> multiple lines<br />second line </template>-->
+<!--      <div>Top center</div>-->
+<!--    </el-tooltip>-->
     <div class="detail">
       <div class="td">
         <div class="site-name">场地名称</div>
@@ -89,7 +89,7 @@ export default {
       sitePerson:null,//场地负责人
       siteTel:null,//联系方式
       siteOpen:true, //是否开放
-      siteApprove:true, //是否需要审批
+      siteApprove:false, //是否需要审批
     }
   },
   mounted() {
@@ -142,7 +142,7 @@ export default {
       this.sitePerson=null;
       this.siteTel=null;
       this.siteOpen=true;
-      this.siteApprove=true;
+      this.siteApprove=false;
       this.showDialog = true;
     },
     //取消弹框
@@ -242,7 +242,7 @@ export default {
 .detail{
   /*margin-top: 10px;*/
   width: 100%;
-  height: 510px;
+  height: 610px;
   /*background-color: pink;*/
   border-radius: 10px;
   overflow: auto;

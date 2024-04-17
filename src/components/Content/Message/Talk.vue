@@ -60,32 +60,32 @@ export default {
         name:'希仔',
         time:'11:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'希仔',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
+          {id:0,name:'天乐',time:'18:57',info:'信息收集表单完成了吗？?'},
+          {id:1,name:'希仔',time:'18:59',info:'最近事情有点多，还没设计完喔~'},
+          {id:0,name:'天乐',time:'18:57',info:'侯，抓紧时间呐~'}
         ],
         num:3
       },
       {
         id:1,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔2',
+        name:'张三',
         time:'1:1',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
-          {id:0,name:'天乐',time:'18:57',info:'?'}
+          {id:0,name:'张三',time:'18:57',info:'通知管理可以直接发布吗?'},
+          {id:1,name:'希仔',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'张三',time:'18:57',info:'任务通知什么时候发版？'}
         ],
         num:3
       },
       {
         id:2,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔3',
+        name:'何意',
         time:'11:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'天乐',time:'18:57',info:'如何修改数据呢？我想添加用户去完成任务。'},
+          {id:1,name:'李想',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
           {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
         ],
         num:3
@@ -93,11 +93,11 @@ export default {
       {
         id:3,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔',
+        name:'王武',
         time:'17:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'天乐',time:'18:57',info:'组织管理我没有权限呐~?'},
+          {id:1,name:'李想',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
           {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
         ],
         num:3
@@ -105,11 +105,11 @@ export default {
       {
         id:4,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔5',
+        name:'李达',
         time:'8:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'天乐',time:'18:57',info:'可以帮我预约一个审批吗?'},
+          {id:1,name:'李想',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
           {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
         ],
         num:3
@@ -117,11 +117,11 @@ export default {
       {
         id:5,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔6',
+        name:'李彦宏',
         time:'11:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'天乐',time:'18:57',info:'有什么需要帮忙处理的吗?'},
+          {id:1,name:'李想',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
           {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
         ],
         num:3
@@ -129,11 +129,11 @@ export default {
       {
         id:6,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔6',
+        name:'杨杰',
         time:'11:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'天乐',time:'18:57',info:'可以帮我审批一下数据吗?'},
+          {id:1,name:'希仔',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
           {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
         ],
         num:3
@@ -141,11 +141,11 @@ export default {
       {
         id:7,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔6',
+        name:'诸葛亮',
         time:'11:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'天乐',time:'18:57',info:'怎么处理信息数据?'},
+          {id:1,name:'希仔',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
           {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
         ],
         num:3
@@ -153,11 +153,11 @@ export default {
       {
         id:8,
         img:require('@/assets/彼岸花女.jpg'),
-        name:'希仔6',
+        name:'李华',
         time:'11:23',
         content:[
-          {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'},
-          {id:1,name:'热巴',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
+          {id:0,name:'天乐',time:'18:57',info:'多久上线？'},
+          {id:1,name:'希仔',time:'18:59',info:'最近八合里周年庆店，咱们去薅羊毛呀'},
           {id:0,name:'天乐',time:'18:57',info:'今天吃点啥?'}
         ],
         num:3

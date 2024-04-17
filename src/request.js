@@ -3,6 +3,10 @@ import fileRequests from "@/fileApi";
 
 // 用户处理
 export const userLogin = (data) => requests({ url: '/api/User/login',method: 'post', data });// 用户登入
+export const logout = (data) => requests({ url: '/api/User/logout',method: 'post', data });// 用户登出
+export const getCurPerInfo = (data) => requests({ url: '/api/User/getCurPerInfo',method: 'post', data });// 用户信息
+export const getAllPerInfo = (data) => requests({ url: '/api/User/getAllPerInfo',method: 'post', data });// 获取系统所有用户信息
+export const deletePerInfo = (data) => requests({ url: '/api/User/deletePerInfo',method: 'post', data });// 删除用户信息
 
 // 信息收集处理
 export const getCollectInfoList = (data) => requests({ url: '/api/CollectInfo/getCollectInfoList',method: 'post', data });// 获取表单配置信息列表
@@ -34,6 +38,8 @@ export const getTaskInfoList = (data) => requests({ url: '/api/TaskManager/getTa
 export const getTaskInfo = (data) => requests({ url: '/api/TaskManager/getTaskInfo',method: 'post', data });// 保存任务管理信息
 export const deleteTask = (data) => requests({ url: '/api/TaskManager/deleteTask',method: 'post', data });// 删除任务管理信息
 export const pubTask = (data) => requests({ url: '/api/TaskManager/pubTask',method: 'post', data });// 发布任务管理信息
+export const doneTask = (data) => requests({ url: '/api/TaskManager/doneTask',method: 'post', data });// 个人任务处理
+export const approvalTask = (data) => requests({ url: '/api/TaskManager/approvalTask',method: 'post', data });// 个人任务审批
 
 
 
@@ -52,6 +58,9 @@ export const deleteWorkTask = (data) => requests({ url: '/api/WorkTask/deleteWor
 
 // 文件处理
 export const uploadFile = (data) => fileRequests({ url: '/api/File/uploadFile',method: 'post', data });// 上传文件
+export const deleteFile = (data) => fileRequests({ url: '/api/File/deleteFile',method: 'post', data });// 下载文件
+export const exportFile = (data) => fileRequests({ url: '/api/File/exportFile',method: 'post', data });// 文件导入
+
 
 //场地管理
 export const addArea = (data) => requests({ url: '/api/Area/addAreaInfo',method: 'post', data });//新增场地
@@ -61,3 +70,12 @@ export const editArea = (data) => requests({ url: '/api/Area/getAreaInfo',method
 export const addAreaBook = (data) => requests({ url: '/api/Area/addAreaBook',method: 'post', data });//新增预约
 export const deleteAreaBook = (data) => requests({ url: '/api/Area/deleteAreaBook',method: 'post', data });//删除预约
 export const getAreaBookList = (data) => requests({ url: '/api/Area/getAreaBookList',method: 'post', data });//预约列表
+
+// 部门管理数据
+export const getOrgList = (data) => requests({ url: '/api/Organize/getOrgList',method: 'post', data });// 部门列表数据
+export const getOrgPers = (data) => requests({ url: '/api/Organize/getOrgPers',method: 'post', data });// 部门人员数据
+export const getChildOrg = (data) => requests({ url: '/api/Organize/getChildOrg',method: 'post', data });// 部门子级数据
+export const saveOrgInfo = (data) => requests({ url: '/api/Organize/saveOrgInfo',method: 'post', data });// 保存部门信息数据
+export const getMyPer = (data) => requests({ url: '/api/Organize/getMyPer',method: 'post', data });// 获取我的用户信息
+export const outOrgPer = (data) => requests({ url: '/api/Organize/outOrgPer',method: 'post', data });// 剔除组织用户
+export const addNewOrgPer = (data) => requests({ url: '/api/Organize/addNewOrgPer',method: 'post', data });// 新增组织用户

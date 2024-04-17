@@ -97,7 +97,19 @@ const routes = [
         path: '/organizeInfo',
         component: () =>
             import ('@/components/Content/Organization/OrganizeInfo')
-    }
+    },
+    // 系统人员管理
+    {
+        path: '/sysOrgPerManager',
+        component: () =>
+            import ('@/components/Content/Organization/SysOrgPerManager')
+    },
+    // 系统人员管理
+    {
+        path: '/outLogin',
+        component: () =>
+            import ('@/components/Login/OutLogin.vue')
+    },
 ];
 
 const router = createRouter({
