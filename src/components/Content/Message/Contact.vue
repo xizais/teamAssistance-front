@@ -43,6 +43,9 @@
 </template>
 
 <script>
+import {addMessageInfo} from "@/request";
+import {ElMessage} from "element-plus";
+
 export default {
   name:'contact-index',
   props:['msg'],
@@ -67,8 +70,20 @@ export default {
     }
   },
   methods:{
-    commit(){
+    async commit(){
       if(this.sendInfo){
+        const requestData = {
+          content: this.sendInfo,
+          id: this.msg.id,
+          otherCod: this.msg.cCCOtherCode,
+          selfCode: this.msg.cCCSelfCode,
+        }
+        const result = await addMessageInfo(requestData);
+        if (result != null && result.code != 0){
+          ElMessage.error(result.message);
+          return;
+        }
+
         let data = {}; //存放新对象
         let time=new Date();
         let hour=time.getHours();

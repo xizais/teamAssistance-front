@@ -139,7 +139,7 @@ export default {
     },
     filteredArray() {
       // 使用筛选条件过滤数组对象
-      return this.dataArray.filter(item => {
+      return this.dataArray?.filter(item => {
         return item.type.includes(this.searchInput)
             || item.title.includes(this.searchInput)
             || item.puber.includes(this.searchInput)
@@ -161,6 +161,11 @@ export default {
         "selectPage": this.selectPage
       };
       let result = await getWorkInfoList(requestData);
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        this.$router.push({ path: "/"});
+        return;
+      }
       this.dataArray = result.data?.workList;
       this.selectPage.total = result.data?.amount;
     },

@@ -171,6 +171,10 @@ export default {
         offset: this.selectPage.offset,
       };
       let result = await getCollectInfoList(requestData);
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        return;
+      }
       this.dataArray = result.data?.infoList;
       this.selectPage.total = result.data?.amount;
     },

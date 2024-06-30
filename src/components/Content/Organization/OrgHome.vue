@@ -6,7 +6,7 @@
           <el-input style="width: 300px;" v-model="searchInput" placeholder="请输入筛选内容"></el-input>
           <el-button class="container-button" type="primary" style="margin-left: 4px" @click="this.searchInput=''">重置</el-button>
         </div>
-        <el-button class="collect-button" style="margin-left: 600px" @click="personManager()" v-if="isSysManager">组织人员管理</el-button>
+        <el-button class="collect-button" style="margin-left: 600px" @click="personManager()" v-if="this.isSysManager">组织人员管理</el-button>
       </div>
       <div style="width: 200px;height: 50px;margin-left: 10px">
         <div style="width: 88px;height: 40px;float: left ">
@@ -61,10 +61,10 @@
                     <el-dropdown-item @click="goToShow(data.cOICode)" v-if="curTargetMy">查看人员</el-dropdown-item>
                     <el-dropdown-item @click="goToChild(data.cOICode)">查看子级</el-dropdown-item>
                     <el-dropdown-item @click="outOrgPerOnly(data.cOICode)" v-if="curTargetMy">退出组织</el-dropdown-item>
-                    <el-dropdown-item @click="managerOrg(data.cOICode)">管理信息</el-dropdown-item>
                     <el-dropdown-item @click="goToOrgCreate(data.cOICode)" v-if="curTargetMy">创建组织</el-dropdown-item>
-                    <el-dropdown-item @click="changeOrgState(data.cOICode,true)">停用部门</el-dropdown-item>
-                    <el-dropdown-item @click="changeOrgState(data.cOICode,false)">启用部门</el-dropdown-item>
+<!--                    <el-dropdown-item @click="managerOrg(data.cOICode)" v-if="curTargetMy">管理信息</el-dropdown-item>-->
+<!--                    <el-dropdown-item @click="changeOrgState(data.cOICode,true)" v-if="curTargetMy">停用部门</el-dropdown-item>-->
+<!--                    <el-dropdown-item @click="changeOrgState(data.cOICode,false)" v-if="curTargetMy">启用部门</el-dropdown-item>-->
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -186,7 +186,6 @@ export default {
   name: "NoticeHome",
   data() {
     return {
-      isSysManager: true, // 是否系统人员
       curOrgCode: null,// 当前组织
       curAmount: 0,// 当前组织总人数
       dialogTableVisible: false,
@@ -275,11 +274,12 @@ export default {
         ElMessage.error("数据获取失败！");
         return;
       }
-      if (result.code !=0) {
+      if (result.code != 0) {
         ElMessage.error(result.message);
         return;
       }
       this.dataArray = result.data?.orgList;
+      this.isSysManager = result.data?.isSysManager;
     },
 
     goToOrgCreate(cOICode) {

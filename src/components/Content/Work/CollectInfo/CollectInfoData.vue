@@ -13,6 +13,7 @@
           <el-dropdown-item @click="reverseState(isPub)" v-if="isPub">停止发布</el-dropdown-item>
           <el-dropdown-item @click="reverseState(isPub)" v-if="!isPub">继续发布</el-dropdown-item>
           <el-dropdown-item @click="openPersonDialog()" v-if="isPub">新增人员</el-dropdown-item>
+          <el-dropdown-item @click="exportCollectData()">导出数据</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -289,6 +290,32 @@ export default {
       }
       ElMessage.success(result.data.message)
       this.isPub = !this.isPub;
+    },
+
+    async exportCollectData() {
+      const formData = new FormData();
+      formData.append('iIFId', this.iIFId);
+
+      // 发起下载请求
+      const response = await fetch('/api/File/downCollectFile', {
+        method: 'POST',
+        body: formData
+      });
+
+      // 将响应转换为 blob 对象
+      const blob = await response.blob();
+
+      // 创建下载链接
+      const downloadUrl = URL.createObjectURL(blob);
+
+      // 创建 <a> 元素并模拟点击
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = this.cIFTitle + '.xlsx' // 设置文件名
+      link.click();
+
+      // 清理资源
+      URL.revokeObjectURL(downloadUrl);
     },
 
     async ClickNotify(data) {

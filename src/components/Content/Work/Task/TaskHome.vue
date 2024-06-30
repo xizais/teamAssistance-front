@@ -68,6 +68,7 @@
                      <el-dropdown-item @click="editPage(data.iTMId)" v-if="data.cTMState == '发布'">结束任务</el-dropdown-item>
                      <el-dropdown-item @click="goToEditPage(data.iTMId)" v-if="data.cTMState != '发布'">编辑任务</el-dropdown-item>
                      <el-dropdown-item @click="deleteTask(data.iTMId)" v-if="data.cTMState != '发布'">删除任务</el-dropdown-item>
+                     <el-dropdown-item @click="downTaskZipFile(data.cTMTitle,data.iTMId)" v-if="data.cTMState != '草稿'">下载压缩文件</el-dropdown-item>
                    </el-dropdown-menu>
                  </template>
                </el-dropdown>
@@ -141,7 +142,11 @@
           searchData: this.searchData,
           pageData: this.selectPage
         };
-        let result = await getTaskInfoList(requestData);
+        const result = await getTaskInfoList(requestData);
+        if (result != null && result.code != 0) {
+          ElMessage.error(result.message);
+          return;
+        }
         this.dataArray = result.data?.infoList;
         this.selectPage.total = result.data?.amount;
       },
@@ -210,10 +215,32 @@
         this.initCollectData();
       },
 
+      // 下载任务压缩文件
+      async downTaskZipFile(cTMTitle,iTMId) {
+        const formData = new FormData();
+        formData.append('iTMId', iTMId);
 
+        // 发起下载请求
+        const response = await fetch('/api/File/downTaskZipFile', {
+          method: 'POST',
+          body: formData
+        });
 
+        // 将响应转换为 blob 对象
+        const blob = await response.blob();
 
+        // 创建下载链接
+        const downloadUrl = URL.createObjectURL(blob);
 
+        // 创建 <a> 元素并模拟点击
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = cTMTitle + '任务完成文件.zip' // 设置文件名
+        link.click();
+
+        // 清理资源
+        URL.revokeObjectURL(downloadUrl);
+      },
 
 
 

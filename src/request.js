@@ -79,3 +79,7 @@ export const saveOrgInfo = (data) => requests({ url: '/api/Organize/saveOrgInfo'
 export const getMyPer = (data) => requests({ url: '/api/Organize/getMyPer',method: 'post', data });// 获取我的用户信息
 export const outOrgPer = (data) => requests({ url: '/api/Organize/outOrgPer',method: 'post', data });// 剔除组织用户
 export const addNewOrgPer = (data) => requests({ url: '/api/Organize/addNewOrgPer',method: 'post', data });// 新增组织用户
+
+// 消息
+export const getMessageList = (data) => requests({ url: '/api/Message/getMessage',method: 'post', data });// 获取组织信息
+export const addMessageInfo = (data) => requests({ url: '/api/Message/saveMessage',method: 'post', data });// 发送信息

@@ -3,7 +3,7 @@
     <div style="display: flex; flex-direction: column;">
       <div style="display: flex;">
         <SearchPage :type="'collectInfo'" @searchInfo="searchInfo" :show-status="false"/>
-        <el-button class="collect-button" @click="goSiteInfo">管理场地信息</el-button>
+        <el-button class="collect-button" @click="goSiteInfo" v-if="this.isSysManager">管理场地信息</el-button>
         <el-button class="collect-button" @click="goToReservePage">查看预约信息</el-button>
       </div>
       <div class="wrapper" v-show="show">
@@ -153,6 +153,7 @@ export default {
       }
       this.dataArray = result.data.infoList;
       this.amount = result.data.amount;
+      this.isSysManager = result.data.isSysManager;
     },
 
     async handleCurrentChange(newPage) {

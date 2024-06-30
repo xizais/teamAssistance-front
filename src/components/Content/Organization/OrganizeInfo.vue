@@ -5,7 +5,7 @@
         <el-button @click="goBack">
           <el-icon><ArrowLeftBold /></el-icon>
         </el-button>
-        <span class="title2">通知发布表单设计</span>
+        <span class="title2">组织管理</span>
         <template v-if="!isView">
           <el-button class="nav-button" @click="resetForm" v-if="!isReadOnly">重置</el-button>
           <el-button class="nav-button" @click="saveForm" v-if="!isReadOnly">保存</el-button>

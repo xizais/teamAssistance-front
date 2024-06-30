@@ -180,6 +180,11 @@ export default {
   methods: {
     async initInfoData() {
       let result = await getNotifyInfoList();
+      if (result.code != 0) {
+        ElMessage.error(result.message);
+        this.$router.push({ path: "/"});
+        return;
+      }
       this.dataArray = result.data?.infoList;
     },
 
